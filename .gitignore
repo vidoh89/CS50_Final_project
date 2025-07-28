@@ -1,0 +1,52 @@
+# Operating System Files
+.DS_Store             # macOS system files
+Thumbs.db             # Windows thumbnail cache
+Desktop.ini           # Windows system file
+.localized            # macOS localization files
+
+# Python specific
+__pycache__/          # Python compiled bytecode cache
+*.pyc                 # Python compiled bytecode files
+*.pyd                 # Python dynamic link library
+*.pyo                 # Optimized Python bytecode
+.Python               # Python runtime environment directory
+
+# Virtual Environment
+env/                  # Common virtual environment directory name
+venv/                 # Common virtual environment directory name
+.venv/                # Common virtual environment directory name
+.env                  # Environment variable files (often used for sensitive data)
+pip-log.txt           # Pip install logs
+pip-delete-this-arg.txt
+
+# Build/Distribution
+build/                # Build artifacts directory
+dist/                 # Distribution directory
+*.egg-info/           # Python egg info directories
+.eggs/                # Python eggs directory
+
+# Testing
+.pytest_cache/        # Pytest cache directory
+.coverage             # Coverage.py data file
+
+# IDEs
+.idea/                # IntelliJ/PyCharm project files
+.vscode/              # VS Code project files (optional, depending on team setup)
+*.swp                 # Vim swap files
+*.sublime-project     # Sublime Text project files
+*.sublime-workspace   # Sublime Text workspace files
+
+# Logs and Temporary files
+*.log                 # Log files
+*.tmp                 # Temporary files
+*~                    # Backup files created by some editors
+.history/             # VS Code Local History
+
+# Node.js / JavaScript specific (since you mentioned Node/Next.js)
+node_modules/         # Node.js module directory
+npm-debug.log         # npm debug log
+yarn-error.log        # Yarn error log
+.npm                  # npm cache directory
+.yarn                 # Yarn cache directory
+.pnp.js               # Plug'n'Play files
+.pnp.* # Other Plug'n'Play files
