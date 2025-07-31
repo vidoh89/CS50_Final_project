@@ -214,7 +214,7 @@ class Logs:
         stdout_handler = logging.StreamHandler(sys.stdout)
         stdout_handler.setFormatter(self._formatter)
         stdout_handler.setLevel(logging.DEBUG)
-        stdout_handler.addFilter(lambda record: record.levelno <= logging.WARNING)
+        stdout_handler.addFilter(lambda record: record.levelno < logging.ERROR)
         # Handler for sys.stderr:(CRITICAL,ERROR)
         stderr_handler = logging.StreamHandler(sys.stderr)
         stderr_handler.setFormatter(self._formatter)

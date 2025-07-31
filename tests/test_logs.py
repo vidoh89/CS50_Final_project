@@ -6,7 +6,7 @@ def test_info_level_logs(capsys):
     """
     Test to validate output for logs
     """
-    my_test_logger = logs.Logs(name="test_name",level=logging.INFO)
+    my_test_logger = logs.Logs(name="test_name",level=logging.DEBUG)
     my_test_logger.info("This test is for INFO level logging")
     my_test_logger.warning("This test is for WARNING level logging")
     my_test_logger.critical("This test is for CRITICAL level logging")
@@ -16,3 +16,7 @@ def test_info_level_logs(capsys):
     captured_output = capsys.readouterr()
     assert "This test is for INFO level logging" in captured_output.out
     assert "This test is for CRITICAL level logging" in captured_output.err
+    assert "This test is for WARNING level logging" in captured_output.out
+    assert "This test is for ERROR level logging" in captured_output.err
+    assert "This test is for DEBUG level logging:should not show" in captured_output.out
+
