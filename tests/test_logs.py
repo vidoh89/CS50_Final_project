@@ -15,3 +15,4 @@ def test_info_level_logs(capsys):
     my_test_logger.close()
     captured_output = capsys.readouterr()
     assert "This test is for INFO level logging" in captured_output.out
+    assert "This test is for CRITICAL level logging" in captured_output.err
