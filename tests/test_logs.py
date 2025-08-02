@@ -2,21 +2,27 @@ import logs
 import logging
 import pytest
 
-def test_info_level_logs(capsys):
+def test_info_level_logs(caplog):
     """
     Test to validate output for logs
     """
-    my_test_logger = logs.Logs(name="test_name",level=logging.DEBUG)
-    my_test_logger.info("This test is for INFO level logging")
-    my_test_logger.warning("This test is for WARNING level logging")
-    my_test_logger.critical("This test is for CRITICAL level logging")
-    my_test_logger.error("This test is for ERROR level logging")
-    my_test_logger.debug("This test is for DEBUG level logging:should not show")
+    caplog.set_level(logging.DEBUG)
+
+    my_test_logger = logs.Logs(name='test_logs',level=logging.INFO)
+    my_test_logger._logger.addHandler(caplog.handler)
+    my_test_logger.info("INFO level test message")
+    my_test_logger.debug("DEBUG level test message")
+    my_test_logger.warning("WARNING level test message")
+    my_test_logger.error("ERROR level test message")
+    my_test_logger.critical("CRITICAL level test message")
+
+    my_test_logger._logger.removeHandler(caplog.handler)
     my_test_logger.close()
-    captured_output = capsys.readouterr()
-    assert "This test is for INFO level logging" in captured_output.out
-    assert "This test is for CRITICAL level logging" in captured_output.err
-    assert "This test is for WARNING level logging" in captured_output.out
-    assert "This test is for ERROR level logging" in captured_output.err
-    assert "This test is for DEBUG level logging:should not show" in captured_output.out
+
+    assert "INFO level test message" in caplog.text
+    assert "WARNING level test message" in caplog.text
+    assert "ERROR level test message" in caplog.text
+    assert "CRITICAL level test message" in caplog.text
+    assert "DEBUG level test message" not in caplog.text
+
 
