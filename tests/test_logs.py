@@ -86,7 +86,19 @@ def test_critical_msg(caplog):
     assert 'WARNING msg should be omitted' not in caplog.text
     assert 'ERROR msg should be omitted' not in caplog.text
     assert 'CRITICAL test functional' in caplog.text
-
+def test_exception_value():
+    """
+    Test for invalid log levels
+    """
+    with pytest.raises(ValueError) as exc_info:
+        logs.Logs(name='test invalid level', level=97)
+        assert exc_info.type(ValueError)
+        assert 'Invalid level' in str(exc_info.value)
+def test_exception_type():
+    with pytest.raises(TypeError) as exc_info:
+        logs.Logs(name='test invalid type',level ="ERROR")
+        assert exc_info.type(TypeError)
+        assert 'Incorrect Type for level value' in str(exc_info.value)
 
 
 
