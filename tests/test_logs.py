@@ -2,6 +2,7 @@ import collections
 
 import logs
 import logging
+import os
 import pytest
 
 def test_info_level_logs(caplog):
@@ -99,6 +100,23 @@ def test_exception_type():
         logs.Logs(name='test invalid type',level ="ERROR")
         assert exc_info.type(TypeError)
         assert 'Incorrect Type for level value' in str(exc_info.value)
+
+def test_dir_path(tmp_path):
+    test_file_path = tmp_path/'test_path.log'
+    log_path = logs.Logs(name='Test Path',level=logging.INFO,log_file=f'{test_file_path}')
+
+    log_path.info('Stored info msg')
+    log_path.error('Stored error msg')
+    log_path.debug('Stored DEBUG msg')
+    log_path.close()
+
+    with open(test_file_path,'r') as f:
+        log_content = f.read()
+
+    assert "Stored info msg" in log_content
+    assert "Stored error msg" in log_content
+    assert "Stored DEBUG msg" not in log_content
+    assert os.path.exists(test_file_path)
 
 
 
