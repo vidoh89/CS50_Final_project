@@ -4,6 +4,7 @@ import logs
 import logging
 import os
 import pytest
+from unittest.mock import patch
 
 def test_info_level_logs(caplog):
     """
@@ -118,5 +119,31 @@ def test_dir_path(tmp_path):
     assert "Stored DEBUG msg" not in log_content
     assert os.path.exists(test_file_path)
 
+def test_default_msg(caplog):
 
+    with patch("os.makedirs",side_effect=OSError("Permission denied")):
+         caplog.set_level(logging.DEBUG)
+         test_logger = logs.Logs(name="Test default path",level=logging.DEBUG,log_file="/non_writable_path/log.log"
+
+        )
+    test_logger._logger.addHandler(caplog.handler)
+    test_logger.info("Test console fallback")
+    test_logger._logger.removeHandler(caplog.handler)
+    test_logger.close()
+    assert "Test console fallback" in caplog.text
+
+def test_default_err_msg(caplog):
+    with patch("os.makedirs",side_effect=OSError("Permission denied")):
+        caplog.set_level(logging.DEBUG)
+        test_logger=logs.Logs(
+            name="Test default error message",
+            level=logging.DEBUG,
+            log_file="/non_writable_path/log.log"
+        )
+    test_logger._logger.addHandler(caplog.handler)
+    test_logger.error("Failed to set log path to")
+    test_logger._logger.removeHandler(caplog.handler)
+    test_logger.close()
+
+    assert "Failed to set log path to" in caplog.text
 

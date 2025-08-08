@@ -63,7 +63,7 @@ class Logs:
             # If file setup fails fall back to console
             self._log_path_value = None
             self._set_stream_handler()
-            print(f"Failed to set log path to:{log_file}.Defaulting to console:{e}")
+            self._logger.error(f"Failed to set log path to:{log_file}.Defaulting to console:{e}")
         # Apply logic for instance variables via setters
         self.log_level = level
         self.log_path = log_file  # Optional path for logs,defaults to console
@@ -183,15 +183,14 @@ class Logs:
             # Generate new handler based on path balue
             if new_path_value is None:
                 # Split console output
-                self.setup_console_handlers()
+                self._config_console_handlers()
             else:
                 self._set_file_handler(new_path_value)
-        except IOError as e:
+        except OSError :
             # In case of file system errors,default to stream handler
-            self._setup_console_handlers()  # Defaults to console
-            raise IOError(
-                f"Could not set log path to: {new_path_value} error {e}"
-            ) from e
+            self._config_console_handlers()  # Defaults to console
+
+
 
     def _remove_all_handlers(self):
         """Removes and closes all current handlers if one exists"""
