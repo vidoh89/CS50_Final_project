@@ -1,3 +1,11 @@
+from data.fred_data import FRED_API
+import os
+import pandas as pd
+from datetime import datetime
+from dotenv import load_dotenv
+
+# load environment variables
+load_dotenv()
 """
 -Final Project instructions:
 1. Your project must be implemented in Python
