@@ -311,8 +311,6 @@ class Logs:
         self._remove_all_handlers()
 
 
-# Example usage
-
 
 
 

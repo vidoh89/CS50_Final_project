@@ -5,6 +5,7 @@ import logging
 import pandas as pd
 import pandas_datareader as pdr
 import requests
+import re
 from dotenv import load_dotenv
 from datetime import datetime
 from logs.logs import Logs
@@ -76,4 +77,67 @@ class FRED_API(Logs):
             return response.json()
         finally:
             self.info("Request process concluded")
+
+    def get_series_obs(
+            self,series_id:str,params:Optional[Dict[str,Any]] =None
+    ) -> Optional[pd.DataFrame]:
+        """
+        Fetches series observation data.
+        :param series_id: ID to retrieve series data
+        :type series_id:str
+        :param params: Dict holds key/value for retrieving data
+        :return: A pandas Dataframe with selected series data
+        :rtype:Optional[pd.DataFrame]
+        """
+        endpoint = "series/observations"
+        #Initialize empty dict if no params are provided
+        if params is None:
+            params = dict()
+        params['series_id'] =series_id
+
+        data = self._request_data(endpoint,params) # Holds the endpoint/params for data retrieval
+        if data and "observations" in data:
+            df = pd.DataFrame(data["observations"]) # return a list of dict in observations key
+            # Clean and convert data
+            if not df.empty:
+
+                #Convert 'date' column to datetime object
+                df['date']= pd.to_datetime(df['date'])
+
+                #Convert 'value' column to numeric values
+                df['value'] = pd.to_numeric(df['value'],errors="coerce")
+
+                #Set the date column as the index for time series
+                df.set_index('date',inplace=True)
+
+                #Drop rows where 'values' are NaN(not a number)
+                df.dropna(subset=['value'],inplace=True)
+
+            self.info(f"Successfully processed observation data for series_id:{series_id}")
+            return df
+        else:
+            self.warning(f"No observation found for series:{series_id}")
             return None
+
+
+if __name__=="__main__":
+    load_dotenv()
+
+    try:
+        fred_client = FRED_API()
+        unemployment_rate_df = fred_client.get_series_obs('UNRATE')
+        if unemployment_rate_df is not None:
+            print('Successfully fetched unemployment data')
+            print(unemployment_rate_df.head())
+            print("\n")
+            print(unemployment_rate_df.info)
+
+            gdp_params = {'observation_start':'2020-01-01'}
+            real_gdp_df = fred_client.get_series_obs('GDPC1',params=gdp_params)
+            if real_gdp_df is not None:
+                print("\nSuccessfully fetched Real GDP data from 2020: ")
+                print(real_gdp_df)
+    except ValueError as e:
+        print(f"Failed to initialize FRED_API:{e}")
+
+
