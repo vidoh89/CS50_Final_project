@@ -65,3 +65,32 @@ def test_request_data_http_error(caplog):
     assert data is None
     assert "Http error occurred: 404 Not Found" in caplog.text
 
+def test_get_series_obs_data_trans():
+    """
+    Test that get_series_obs returns a pd.DataFrame with correct formatting
+    """
+    fred_client = FRED_API(api_key="TEST_KEY")
+    mock_data ={
+        "observations":[
+            {"date":"2020-01-01","value":"100.5"},
+            {"date":"2020-04-01","value":"101.2"},
+            {"date":"2020-07-01","value":"."}
+        ]
+    }
+    with patch.object(fred_client,'_request_data',return_value= mock_data) as mock_request:
+        df = fred_client.get_series_obs("TEST_SERIES")
+
+    assert isinstance(df,pd.DataFrame)
+    assert len(df) ==2
+
+    assert pd.api.types.is_datetime64_dtype(df.index)
+
+    assert pd.api.types.is_numeric_dtype(df['value'])
+
+    assert df.loc["2020-01-01","value"] == 100.5
+
+    mock_request.assert_called_once_with(
+        "series/observations",
+        {'series_id':'TEST_SERIES'}
+    )
+
