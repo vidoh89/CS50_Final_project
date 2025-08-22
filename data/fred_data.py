@@ -119,7 +119,6 @@ class FRED_API(Logs):
             self.warning(f"No observation found for series:{series_id}")
             return None
 
-
 if __name__=="__main__":
     load_dotenv()
 

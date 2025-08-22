@@ -1,0 +1,12 @@
+{
+    "https://api.shinyapps.io": {
+        "server_url": "https://api.shinyapps.io",
+        "filename": "C:\\Users\\vncdo\\OneDrive\\Desktop\\cs50-final-project",
+        "app_url": "https://vincedority.shinyapps.io/gogdp1/",
+        "app_id": "15245389",
+        "app_guid": null,
+        "title": "GOGDP",
+        "app_mode": "python-shiny",
+        "app_store_version": 1
+    }
+}
