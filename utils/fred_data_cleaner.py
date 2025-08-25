@@ -4,6 +4,7 @@ import logging
 from typing import Union,Optional
 from data.fred_data import FRED_API
 from logs.logs import Logs
+from dotenv import load_dotenv
 
 class Fred_Data_Cleaner(Logs):
     """
@@ -41,11 +42,13 @@ class Fred_Data_Cleaner(Logs):
             self.info('No missing values to fill.Skipping forward-fill process.')
             return self
 
-    def gdp_growth_rate(self,column_name:str='value'):
+    def calculate_pct_change(self,column_name:str='value',new_column_name:str=None):
         """
-        Calculates quarter by quarter growth rate for specified date
+        Calculates the rate of change quarter by quarter, for specified date
         :param column_name: Name of column containing values
         :type column_name:str
+        :param new_column_name: Holds the value for chosen new column
+        :type new_column_name:str
         :return: Returns Fred_Data_Cleaner object instance for method chaining
         :rtype: Fred_Data_Cleaner
         """
@@ -53,6 +56,8 @@ class Fred_Data_Cleaner(Logs):
 
             self.error(f'Column<{column_name}> not found in DataFrame. Could not calculate growth rate.')
             return self
+        if new_column_name is None:
+            self.new_column_name = f"{column_name}_growth_rate"
         # Adjust df['value'] column to reflect df['Growth Rate']
         try:
             self.df.loc[:,'gdp_growth_rate'] = self.df[column_name].pct_change() * 100
@@ -73,3 +78,16 @@ class Fred_Data_Cleaner(Logs):
         return self.df
 
 
+
+if __name__=="__main__":
+    load_dotenv()
+
+    try:
+        fred_client = FRED_API()
+        gdp_params = {'observation_start':'2020-01-01','observation_end':'2025-12-31'}
+        real_gdp_df = fred_client.get_series_obs('GDPC1',params=gdp_params)
+        if real_gdp_df is not None:
+            print("\nSuccessfully fetched Real GDP data from 2020: ")
+            print(real_gdp_df)
+    except ValueError as e:
+        print(f"Failed to initialize FRED_API:{e}")

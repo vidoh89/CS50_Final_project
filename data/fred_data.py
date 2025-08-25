@@ -1,3 +1,5 @@
+import aiohttp
+import asyncio
 import importlib
 import os
 import sys
@@ -10,6 +12,8 @@ from dotenv import load_dotenv
 from datetime import datetime
 from logs.logs import Logs
 from typing import Union, Optional, Dict, Any
+
+
 
 
 class FRED_API(Logs):
@@ -124,18 +128,11 @@ if __name__=="__main__":
 
     try:
         fred_client = FRED_API()
-        unemployment_rate_df = fred_client.get_series_obs('UNRATE')
-        if unemployment_rate_df is not None:
-            print('Successfully fetched unemployment data')
-            print(unemployment_rate_df.head())
-            print("\n")
-            print(unemployment_rate_df.info)
-
-            gdp_params = {'observation_start':'2020-01-01'}
-            real_gdp_df = fred_client.get_series_obs('GDPC1',params=gdp_params)
-            if real_gdp_df is not None:
-                print("\nSuccessfully fetched Real GDP data from 2020: ")
-                print(real_gdp_df)
+        gdp_params = {'observation_start':'2020-01-01','observation_end':'2025-12-31'}
+        real_gdp_df = fred_client.get_series_obs('GDPC1',params=gdp_params)
+        if real_gdp_df is not None:
+            print("\nSuccessfully fetched Real GDP data from 2020: ")
+            print(real_gdp_df)
     except ValueError as e:
         print(f"Failed to initialize FRED_API:{e}")
 

@@ -8,7 +8,9 @@ from shiny import App,Inputs,Outputs,Session, render, ui
 from data.fred_data import FRED_API
 from logs.logs import Logs
 from typing import Optional, Union
+from app_ui.navbar import Navbar
 from htmltools import TagList, div
+
 
 # Load environment variables
 load_dotenv()
@@ -47,6 +49,9 @@ class FRED_GDP_UI(Logs):
         self._lang = lang
         self._theme = theme
         self.info("Variable initialization successful.")
+
+        # Instantiate the Navbar
+        self.navbar = Navbar()
 
     @property
     def ui_page_title(self) -> Optional[str]:
@@ -159,15 +164,14 @@ class FRED_GDP_UI(Logs):
         #Create path to theme or .css
         self.info("Configuring path for theme.")
         theme_path = pathlib.Path(__file__).parent/".."/"www"/"theme"/"style.css"
-        return ui.page_fluid(
-            ui.h2("U.S GDP Data from the FRED API"),
-            ui.layout_sidebar(
-                ui.sidebar("Left sidebar content",id="sidebar_left"),
-                ui.output_text_verbatim("state_left"),
-            )
+        return ui.page_navbar(
+            self.navbar.ui_generator(),
+            title = self.ui_page_title,
+            lang  = self.ui_lang_selector,
+            theme = self.get_custom_theme,
         )
 
-my_app_ui = FRED_GDP_UI(title="Example page title",lang="en")
+my_app_ui = FRED_GDP_UI(title="Go GDP",lang="en")
 
 app = App(my_app_ui.app_ui, None)
 if __name__ =="__main__":
