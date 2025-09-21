@@ -51,7 +51,7 @@ class FRED_GDP_UI(Logs):
             gdp_logo = ui.tags.a(
                 ui.tags.img(
                     ui.output_image("logo"),
-                    src='/logo_2.png',
+                    src='logo_2.png',
 
                ),
                 href='#',
