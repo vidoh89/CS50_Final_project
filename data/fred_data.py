@@ -23,6 +23,7 @@ class FRED_API(Logs):
     """
 
     BASE_LINK: str = "https://api.stlouisfed.org/fred/"
+    CATEGORY_END_POINTS= f'category?category_id={None}&api_key={None}file_type={None}'
 
     def __init__(self, api_key: Union[str, None] = None):
         """

@@ -62,9 +62,15 @@ class Graph_For_Data(Logs):
         # Update figure layout
         fig.update_layout(
             title_text =fig_title,
-            template='plotly_white',
+            template='seaborn',
             hovermode="x unified",
-            legend=dict(x=0.01,y=0.99,bgcolor='rgba(255,255,255,0.7)'),
+            legend=dict(x=0.01,y=0.99,bgcolor='rgba(255,255,255,0.9)'),
+            margin=dict(l=40,r=40,b=25,t=120),
+            title=dict(
+                font=dict(size=11,weight='bold')
+
+            ),
+            title_font_family='Open Sans',
 
         )
         # Set x-axis properties
@@ -73,6 +79,8 @@ class Graph_For_Data(Logs):
             type='date',
             showgrid=True,
             tickformat="%Y Q%q", #Date format Year(Quarter)
+            # responsive tick settings
+            tickfont=dict(size=8)
 
         )
         # set y-axes titles and properties
@@ -82,7 +90,10 @@ class Graph_For_Data(Logs):
             showgrid=True,
             zerolinewidth=2,
             zerolinecolor='LightGrey',
-            range=[df['value'].min() * 0.9,df['value'].max()*1.1]
+            range=[df['value'].min() * 0.9,df['value'].max()*1.1],
+            # responsive settings for title and tick font
+            title_font=dict(size=10),
+            tickfont=dict(size=8)
 
         )
         fig.update_yaxes(
@@ -92,11 +103,12 @@ class Graph_For_Data(Logs):
             zeroline=True,
             zerolinewidth=2,
             zerolinecolor='LightGrey',
-            range=[df['value_growth_rate'].min() * 1.2,df['value_growth_rate'].max() * 1.2]
-
+            range=[df['value_growth_rate'].min() * 1.2,df['value_growth_rate'].max() * 1.2],
+            # responsive settings for title and tick font
+            title_font=dict(size=10),
+            tickfont=dict(size=8)
         )
         self.info("Plotly figure successfully generated.")
-        fig.show()
         return fig
 
 
@@ -148,7 +160,7 @@ if __name__ == '__main__':
             fig = graph_creator.graph_generator(df=gdp_dataframe)
 
             # Step 5: Save the figure to an HTML file and open it in a browser
-            output_file = 'gdp_and_growth_rate_graph.html'
+            output_file = 'gdp_and_growth_rate_graph_practice.html'
             fig.write_html(output_file, auto_open=True)
             logging.info(f"Graph generation complete. Output saved to '{output_file}' and opened in browser.")
 

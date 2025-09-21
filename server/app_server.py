@@ -6,7 +6,7 @@ import os
 import pathlib
 from dotenv import load_dotenv
 from shiny import App, Inputs, Outputs, Session, render, ui, reactive
-from shinywidgets import render_widget
+from shinywidgets import render_widget, output_widget
 from data.fred_data import FRED_API
 from app_ui.graph_data import Graph_For_Data
 from utils.fred_data_cleaner import Fred_Data_Cleaner
@@ -14,6 +14,7 @@ from utils.csv_data_retriever import Get_Data
 from logs.logs import Logs
 from typing import Optional, Union
 from htmltools import TagList, div, Tag
+from shiny.types import ImgData
 
 
 class GDP_DATA_SERVER(Logs):
@@ -24,12 +25,13 @@ class GDP_DATA_SERVER(Logs):
     def __init__(self):
         super().__init__(name='Server module', level=logging.INFO)
 
-    def ui_output_ui(self) -> Tag:
-        """
-        Creates an output container for UI(HTML) element
-        :return: returns a tag object
-        :rtype: Tag
-        """
+        # Initialize instance variables
+        self.get_graph = Get_Data()
+        self.graph_creator = Graph_For_Data()
+        self.info("Loading GDP data.")
+        self.gdp_df = self.get_graph.get_gdp_csv()
+        if self.gdp_df is None or self.gdp_df.empty:
+            self.warning("Failed to load GDP data or Dataframe is empty.")
 
     def get_server(self):
         """
@@ -45,12 +47,22 @@ class GDP_DATA_SERVER(Logs):
             :return:
             """
 
-            @render.ui
-            def gdp_navbar_id() -> Union[ui.navset_tab, Tag]:
-                self.info('Setting navbar component in server')
-                return ui.navset_tab(
-                    ui.nav_panel("GDP Data","Latest GDP insights"),
-                    ui.nav_panel("About","About section for GDP")
-                )
+            @render_widget
+            def gdp_growth_plot():
+                """
+                Renders the Growth plot for the GDP
+                :return:
+                """
+                self.info("Rendering plot.")
+                if self.gdp_df is not None and not self.gdp_df.empty:
+                    # Create plotly figure
+                    fig = self.graph_creator.graph_generator(df=self.gdp_df)
+                    return fig
+                else:
+                    self.warning("Could not plot GDP data")
+
+                    return go.Figure()
+
+
 
         return server
