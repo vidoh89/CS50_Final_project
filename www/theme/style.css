@@ -254,115 +254,49 @@
   --md-blue-grey-800: #37474F;
   --md-blue-grey-900: #263238;
 
+  --background-primary: #2e3e4e;
+  --background-secondary: #455A64;
+
+  --text-primary: #ECEFF1;
+  --text-secondary:#90A4AE;
+
+  --accent-border-primary:var(--md-blue-50);
+  --border-color: var(--md-blue-grey-800);
+
+
 }
+
 body{
-    margin:0;
-    padding:0;
-    background-color:  #0d1b2a;
-}
+    background-color: var(--background-primary);
+    color: var(--text-primary);
 
-#gdp_growth_plot{
-     display:flex;
-    justify-content: center;
-    align-item:center;
-    min-height:100vh;
-    background-color: #0d1b2a;
-    padding: 2rem;
-    margin-top:5rem ;
 }
-
-img{
+header.header-nav{
     display:flex;
-    max-width:100%;
-    height: auto;
-    max-height: 150px;
-    margin-top:-3rem;
-    margin-left:-6rem;
-    margin-right: 6rem;
-
-
-}
-.nav{
-    display:flex;
+    justify-content: space-between;
     align-items: center;
-    justify-content: flex-start;
-    height:50px;
-}
 
-li {
+}
+header.header-nav a.Logo img{
+      width:auto;
+      height:100px;
+      max-width:100%;
+}
+header.header-nav nav.nav-links{
     display:flex;
     align-items:center;
-    justify-content:flex-start;
-    padding-top:1rem;
+    gap: 1rem;
+    justify-content: center;
 }
-a.navbar-brand{
-    display:flex;
-    align-items:center;
-    height:100%;
+header.header-nav nav.nav-links a{
+    text-decoration:none;
+    padding:1rem 1.5rem;
+    transition: color 0.2s ease;
+}
+.slider_card{
+    border: 4px solid var(--border-color);
+}
+a{
+ color: var(--accent-primary);
 
-}
-a.navbar-brand img{
-    height:80px;
-
-}
-
-a.nav-link{
-   display:flex;
-   color: var(--md-blue-grey-400);
-   position:absolute;
-    margin-left: -50%;
-   margin-right:50%;
-   margin-top:-7%;
-   margin-bottom: 7%;
-}
-@media(min-width:400px){
-        img{
-            margin-left:-3rem;
-            margin-right: 3rem;
-        }
-}
-@media(min-width:450px){
-    img{
-        max-width:auto;
-        margin-left:-7rem;
-        margin-right:7rem;
-    }
-    a.nav-link{
-        margin-top:-2%;
-        margin-bottom:2%;
-        margin-left:-50%;
-        margin-right: 50%;
-    }
-
-}
-@media(min-width:600px){
-    img{
-       margin-left:-5rem;
-       margin-right:5rem;
-    }
-    a.nav-link{
-        position:relative;
-        margin-top:-22rem;
-    }
-}
-@media(min-width:650px){
-     margin-left:-6.6rem;
-     margin-right: 6.6rem;
-}
-@media(min-width:700px){
-    img{
-        margin-left:-6.5rem;
-        margin-right:6.5rem;
-    }
-}
-@media(min-width:768px){
-      .nav{
-          margin-left:4rem;
-
-      }
-    img{
-        margin-top:-24.5rem;
-        margin-left:-6rem;
-        margin-right:6rem;
-    }
 }
