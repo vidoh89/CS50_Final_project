@@ -4,13 +4,11 @@ import logging
 import os
 import plotly.graph_objects as go
 import pathlib
-
 import shiny
+import shinywidgets
 from dotenv import load_dotenv
 from shiny import App, Inputs, Outputs, Session, render, ui, reactive
-
 import theme_style
-from data.fred_data import FRED_API
 from logs.logs import Logs
 from typing import Optional, Union
 from app_ui.navbar import Navbar
@@ -41,47 +39,78 @@ class FRED_GDP_UI(Logs):
         except Exception as e:
             self.error(f'Error handling css file: {e}')
             self.css_path = None
+        self._max_date = None
+        self._min_date = None
 
     def gdp_nav_container(self):
         try:
             base_path = pathlib.Path(__file__).parent.resolve()
             full_path = base_path / 'www' / 'theme' / 'style.css'
+            self._min_date = pd.to_datetime('1987-01-01')
+            self._max_date = pd.to_datetime('2025-01-01')
 
             # Object to hold logo
             gdp_logo = ui.tags.a(
                 ui.tags.img(
-                    ui.output_image("logo"),
                     src='logo_2.png',
 
-               ),
+                ),
                 href='#',
-                class_='navbar-brand'  # The `navbar-brand` class should be on the parent div
+                class_='navbar-brand'
 
             )
 
             return ui.page_fluid(
+                ui.busy_indicators.use(spinners=False, pulse=False),
 
                 ui.tags.head(
                     ui.include_css(
-                        full_path
-                    )
+                        full_path,
+
+                    ),
                 ),
+
                 ui.page_navbar(
 
                     ui.nav_control(gdp_logo),
 
                     ui.nav_panel("GDP",
                                  ui.h4('Latest GDP insights'),
-                                 output_widget("gdp_growth_plot")),
+
+                                 ui.input_slider(
+                                     "date_range",
+                                     "Select Date Range",
+                                     min=self._min_date,
+                                     max=self._max_date,
+                                     value=(pd.to_datetime("2020-01-01"), pd.to_datetime("2024-01-01")),
+                                     time_format="%Y-%m-%d",
+                                     animate=ui.AnimationOptions(
+                                         interval=250,
+                                         loop=False,
+                                         play_button="Play",
+                                         pause_button="Pause"
+                                     )
+
+
+
+
+                                 ),
+
+                                 ui.div(
+                                     ui.output_ui("gdp_growth_plot"),
+                                     style="min-height: 550px"
+                                 ),
+
+                                 ),
+
                     ui.nav_panel("About", "About section for gdp"),
                     fluid=True,
                     window_title='GDP Growth Rate',
                     lang='en',
                     theme=ui.Theme(preset="flatly"),
-                    navbar_options=ui.navbar_options(position="fixed-top", collapsible=True),
+                    navbar_options=ui.navbar_options(collapsible=False),
 
                 ),
-                ui.output_ui('nav_bar', inline=True)
 
             )
 

@@ -12,6 +12,7 @@ from logs.logs import Logs
 from typing import Union, Optional, Dict, Any
 
 
+
 class FRED_API(Logs):
     """
     St. Louis Federal Reserve (FRED) API client.
@@ -163,21 +164,3 @@ class FRED_API(Logs):
             return None
 
 
-async def main():
-    """
-    Main function to run the FRED client
-
-    """
-    load_dotenv()
-    async with FRED_API() as fred_client:
-        try:
-            gdp_params = {'observation_start':'2020-01-01','observation_end':'2025-12-31'}
-            real_gdp_df = await fred_client.get_series_obs('GDPC1',params=gdp_params)
-            if real_gdp_df is not None:
-                print("\nSuccessfully fetched Real GDP data from 2020")
-                print(real_gdp_df)
-        except ValueError as value_e:
-            print(f'Failed to initialize FRED_API:{value_e}')
-
-if __name__ == "__main__":
-    asyncio.run(main())
