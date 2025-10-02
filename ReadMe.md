@@ -2,7 +2,7 @@
 
 ---
 
-#  **FRED GDP Insights Dashboard**Live view - https://vincedority.shinyapps.io/gogdp1/
+#  **FRED GDP Insights Dashboard** Live view - https://vincedority.shinyapps.io/gogdp1/
 
 An interactive web dashboard for visualizing and analyzing U.S. economic data, focusing on the Gross Domestic Product (GDP). This application leverages the power of Python to fetch, process, and display key economic indicators in a responsive and user-friendly interface.  
 ---
