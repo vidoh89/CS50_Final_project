@@ -53,56 +53,62 @@ class FRED_GDP_UI(Logs):
             gdp_logo = ui.tags.a(
                 ui.tags.img(src="logo_2.png", alt="Logo"), href="#", class_="Logo"
             )
-            nav_links = ui.tags.nav(
-                ui.a("GDP", href="#"), ui.a("About", href="#"), class_="nav-links"
-            )
-
-            return ui.page_fluid(
-                ui.busy_indicators.use(spinners=False, pulse=False),
-                ui.tags.head(
-                    ui.include_css(
-                        full_path,
-                    ),
-                ),
-                # header
-                ui.tags.header(gdp_logo, nav_links, class_="header-nav"),
-
-                # main content container
-                ui.tags.main(
-                    # div for slider and nav components
+            # Navigational links
+            # GDP page content
+            gdp_panel = ui.nav_panel(
+                "GDP",
+                ui.div(
+                 # GDP card
                     ui.div(
-                        # Card 1, slider
-                        ui.div(
-                            ui.h4("Latest GDP insights"),
-                            ui.input_slider(
-                                "date_range",
-                                "Select Date Range",
-                                min=self._min_date,
-                                max=self._max_date,
-                                value=(
-                                    pd.to_datetime("2020-01-01"),
-                                    pd.to_datetime("2024-01-01"),
-                                ),
-                                time_format="%Y-%m-%d",
-                                animate=ui.AnimationOptions(
-                                    interval=400,
-                                    loop=False,
-                                    play_button="Time lapse data",
-                                    pause_button="Stop Time lapse",
-                                ),
+                        ui.h4("Latest GDP Insights"),
+                        ui.input_slider(
+                            "date_range",
+                            "Select Date Range",
+                            min=self._min_date,
+                            max=self._max_date,
+                            value=(
+                                pd.to_datetime("2020-01-01"),
+                                pd.to_datetime("2024-01-01"),
                             ),
-                            class_="slider_card",
+                            time_format="%Y-%m-%d",
+                            animate=ui.AnimationOptions(
+                                interval=400,
+                                loop=False,
+                                play_button="Time lapse data",
+                                pause_button="Stop Time lapse",
+                            ),
                         ),
-                        # Card 2: graph output
-                        ui.div(
-                            ui.output_ui("gdp_growth_plot"),
-                            class_="plot_card",
-                        ),
-                        class_="main-container",
-                    )
-                ),
+                        class_="slider_card",
+                    ),
+                    # Graph card
+                    ui.div(
+                        ui.output_ui("gdp_growth_plot"),
+                        class_="plot_card",
+                    ),
+                    class_="main-container",
+                )
+            )
+            # About page content
+            about_panel = ui.nav_panel(
+                "About",
+                ui.div(
+                    ui.h2("About This Application"),
+                    ui.p("This application visualizes us Real GDP and Quarterly Growth Rate data sourced from FRED."),
+                    ui.a("Data Source: FRED API",href="https://fred.stlouisfed.org/",target="_blank"),
+                    class_="main-container"
 
-            )  # End of page_fluid
+                )
+            )
+            ####################
+
+            return ui.page_bootstrap( ui.tags.head(ui.include_css(full_path)),ui.page_navbar(
+
+                gdp_panel,
+                about_panel,
+                title=gdp_logo,
+                id="main_nav"
+                )
+            )
 
         except Exception as e:
             self.error(f"Could not generate UI: Error{e}")
