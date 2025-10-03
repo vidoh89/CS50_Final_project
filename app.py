@@ -93,7 +93,7 @@ class FRED_GDP_UI(Logs):
                 "About",
                 ui.div(
                     ui.h2("About This Application"),
-                    ui.p("This application visualizes us Real GDP and Quarterly Growth Rate data sourced from FRED."),
+                    ui.p("This application visualizes US Real GDP and Quarterly Growth Rate data sourced from FRED."),
                     ui.a("Data Source: FRED API",href="https://fred.stlouisfed.org/",target="_blank"),
                     class_="main-container"
 
