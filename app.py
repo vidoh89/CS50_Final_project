@@ -51,14 +51,16 @@ class FRED_GDP_UI(Logs):
 
             # Object to hold logo
             gdp_logo = ui.tags.a(
-                ui.tags.img(src="logo_2.png", alt="Logo"), href="#", class_="Logo"
+                ui.tags.img(src="logo_2.png", alt="Go GDP Homepage.Click Logo to be taken to homepage"),
+                href="/",
+                class_="Logo"
             )
             # Navigational links
             # GDP page content
             gdp_panel = ui.nav_panel(
                 "GDP",
                 ui.div(
-                 # GDP card
+                    # GDP card
                     ui.div(
                         ui.h4("Latest GDP Insights"),
                         ui.input_slider(
@@ -86,27 +88,36 @@ class FRED_GDP_UI(Logs):
                         class_="plot_card",
                     ),
                     class_="main-container",
-                )
+                ),
             )
             # About page content
             about_panel = ui.nav_panel(
                 "About",
                 ui.div(
                     ui.h2("About This Application"),
-                    ui.p("This application visualizes US Real GDP and Quarterly Growth Rate data sourced from FRED."),
-                    ui.a("Data Source: FRED API",href="https://fred.stlouisfed.org/",target="_blank"),
-                    class_="main-container"
-
-                )
+                    ui.p(
+                        "This application visualizes US Real GDP and Quarterly Growth Rate data sourced from FRED."
+                    ),
+                    ui.a(
+                        "Data Source: FRED API",
+                        href="https://fred.stlouisfed.org/",
+                        target="_blank",
+                    ),
+                    class_="main-container",
+                ),
             )
             ####################
 
-            return ui.page_bootstrap( ui.tags.head(ui.include_css(full_path)),ui.page_navbar(
-
-                gdp_panel,
-                about_panel,
-                title=gdp_logo,
-                id="main_nav"
+            return ui.page_bootstrap(
+                ui.tags.head(
+                    ui.tags.title("GDP Growth Rate"),
+                    ui.include_css(full_path)
+                             ),
+                ui.div(
+                    ui.page_navbar(
+                        gdp_panel, about_panel, title=gdp_logo, id="main_nav", bg=None
+                    ),
+                    class_="page-container"
                 )
             )
 

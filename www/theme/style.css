@@ -265,36 +265,35 @@
 
 
 }
+body{
+    background: var(--background-primary)
 
-
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.5rem 1.5rem;
-  background-color: var(--background-primary);
-  color: var(--md-indigo-50);
+}
+div nav{
+    background: var(--background-primary)
+    border: solid 5rem var(--md-blue-grey-500);
+    width:100vw;
+    margin-left:-1.5rem;
+}
+div nav.navbar{
+    border-bottom: solid .13rem var(--md-blue-grey-400) !important;
+    margin-top: 1rem;
+    width:100vw;
+}
+.page-container{
+    max-width:1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    background-color: var(--background-primary);
 }
 
-.navbar-brand{
-   width: 50%;
-   margin-left:1rem;
-}
 .navbar-brand a.Logo img {
-  height: 80px;
+  height: 100px;
   width: auto;
-  padding-right:3rem;
+  padding-right:1rem;
+  margin-left:-1rem;
 
 }
-
-
-.navbar-nav {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-
 .nav-link {
   color: var(--md-indigo-50)
   text-decoration: none;
@@ -305,19 +304,53 @@
 ul#main_nav.navbar-nav{
   display:flex;
   flex-direction: row;
-  justify-content:center;
+  justify-content:flex-start;
   align-content:center;
 }
 ul#main_nav.navbar-nav.nav a{
  color:var(--md-indigo-50);
 }
 div.container-fluid{
+    display:flex;
     background-color: var(--background-primary);
-    color:white;
+    color:var(--md-indigo-50);
+    justify-content: space-between;
+    align-items:center;
+
+}
+
+div.container-fluid button.navbar-toggler{
+    border: solid .13rem var(--md-blue-grey-500) !important;
 }
 span.play{
    color:var(--md-indigo-50);
   text-decoration: none;
 
 
+}
+a.nav-link.active{
+
+  color: var(--md-cyan-200) !important;
+  margin-right:.2rem;
+}
+a.nav-link{
+   box-shadow: 2px 1px 5px;
+   width:4rem;
+   height:3rem;
+    text-align: center;
+    margin-top: .7rem;
+    margin-bottom:.7rem;
+    border: 2px solid transparent;
+    border-radius: 20px;
+    margin:.2rem;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+
+}
+.nav-item:not(.active) .nav-link:hover{
+    background-color: var(--md-cyan-200);
+    border-color: var(--md-cyan-200);
+    color: var(--md-indigo-50);
+}
+ul#main_nav{
+    margin-bottom: 1rem;
 }

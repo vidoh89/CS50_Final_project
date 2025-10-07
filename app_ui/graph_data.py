@@ -62,7 +62,8 @@ class Graph_For_Data(Logs):
                 x=df.index,
                 y=df['value'].tolist(),
                 name='Real GDP(Billions)',
-                mode='lines+markers'
+                mode='lines+markers',
+                textfont=dict(size=4)
             )
 
         )
@@ -80,8 +81,12 @@ class Graph_For_Data(Logs):
         _fig.update_layout(
             template='plotly_dark',
             title_text=fig_title,
+            title="US Real GDP and Quarterly Growth Rate",
             title_x=0.5,
+            title_y=0.90,
+            font=dict(size=9.5,weight=500,color='#E8EAF6',textcase='normal',shadow='0px 1px 2px #9FA8DA'),
             hovermode="x unified",
+
             legend=dict(
                 orientation='h',
                 yanchor='bottom',
@@ -91,14 +96,14 @@ class Graph_For_Data(Logs):
                 bgcolor='rgba(0,0,0,0)',
 
             ),
-            margin=dict(l=100,r=100,b=100,t=100,pad=2),
+            margin=dict(l=50,r=50,b=50,t=100,pad=4),
 
             xaxis=dict(
                 title_text="Date (Quarterly)",
                 type='date',
                 showgrid=True,
                 tickformat="%Y Q%q",
-                tickfont=dict(size=8)
+                tickfont=dict(size=6),
             ),
             yaxis=dict(
                 title_text="Real GDP($B)",
@@ -106,7 +111,7 @@ class Graph_For_Data(Logs):
                 zerolinewidth=2,
                 zerolinecolor='LightGrey',
                 type='linear',
-                title_font=dict(size=14),
+                title_font=dict(size=10),
                 tickfont=dict(size=10)
             ),
             # plt secondary_y axis
@@ -119,7 +124,7 @@ class Graph_For_Data(Logs):
                 zerolinewidth=2,
                 zerolinecolor='LightGrey',
                 type='linear',
-                title_font=dict(size=14),
+                title_font=dict(size=10),
                 tickfont=dict(size=10),
 
             )
