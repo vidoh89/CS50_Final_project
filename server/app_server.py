@@ -50,7 +50,7 @@ class GDP_DATA_SERVER(Logs):
             :return:
             """
 
-            @render.ui
+            @render_widget
             async def gdp_growth_plot():
                 """
                 Plots gdp data
@@ -100,17 +100,73 @@ class GDP_DATA_SERVER(Logs):
                     self.info('Successfully transformed GDP data.')
                     if gdp_df is not None and not gdp_df.empty:
                         self.info(f"Generating plot HTML with {len(gdp_df)} data points")
-                        fig = self.graph_creator.graph_generator(df=gdp_df)
-                        html_content = fig.to_html(full_html=True,config={'responsive':True})
-                        return ui.HTML(html_content)
+                        # fig = self.graph_creator.graph_generator(df=gdp_df)
+                        # print(gdp_df.head())
+                        # print(gdp_df.info())
+
+                        # html_content = fig.to_html(
+                        #     full_html=False,
+                        #     config={'responsive':True},
+                        #     div_id="custom_graph_scheme",
+                        #
+                        #     )
+                        # print(type(html_content))
+                        fig=go.Figure()
+                        fig.add_trace(
+                            go.Scatter(
+                                x=gdp_df.index,
+                                y=gdp_df['value'],
+                                name='Real GDP(Billions)',
+                                mode='lines+markers',
+                                line=dict(color='cyan', width=2),
+                            )
+                        )
+
+                        # adds second trace for the gdp (Growth Rate)
+                        fig.add_trace(
+                            go.Scatter(
+                                x=gdp_df.index,
+                                y=gdp_df['value_growth_rate'],
+                                name='Growth Rate(%)',
+                                mode='lines+markers',
+                                yaxis='y2',
+                                line=dict(color='#ff6a00', width=2)
+                            )
+                        )
+
+                        # update figure layout
+                        fig.update_layout(
+                            template='plotly_dark',
+                            title_text="US Real GDP and Quarterly Growth Rate",
+                            title_x=0.5,
+                            title_y=0.94,
+                            font=dict(size=9.5, color='#E8EAF6'),
+                            hovermode="x unified",
+                            legend=dict(
+                                orientation='h', yanchor='bottom', y=1.00,
+                                xanchor='center', x=0.5, bgcolor='rgba(0,0,0,0)'
+                            ),
+                            margin=dict(l=50, r=50, b=50, t=100, pad=5),
+                            xaxis=dict(
+                                title_text="Date (Quarterly)", type='date',
+                                showgrid=True, tickformat="%Y Q%q"
+                            ),
+                            yaxis=dict(
+                                title_text="Real GDP($B)", showgrid=True,
+                                zerolinewidth=2, zerolinecolor='LightGrey'
+                            ),
+                            yaxis2=dict(
+                                title_text="Growth Rate (%)", overlaying='y',
+                                side='right', showgrid=False, zeroline=True,
+                                zerolinewidth=2, zerolinecolor='LightGrey'
+                            )
+                        )
+                        return fig
                     else:
                         self.warning('Dataframe is empty after processing; rendering default message.')
-                        return ui.p(
-                            "No data available for the selected date range.",
-                            style="text-align:center;padding:2rem;"
-                        )
+                        return go.Figure()
                 except Exception as e:
                     self.error(f'An error occurred while fetching FRED data:{e}')
-                    return ui.p("An error occurred while fetching data.")
+                    return go.Figure()
 
         return server

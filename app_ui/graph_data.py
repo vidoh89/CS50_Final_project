@@ -63,6 +63,7 @@ class Graph_For_Data(Logs):
                 y=df['value'].tolist(),
                 name='Real GDP(Billions)',
                 mode='lines+markers',
+                line=dict(color='cyan',width=2),
                 textfont=dict(size=4)
             )
 
@@ -74,6 +75,7 @@ class Graph_For_Data(Logs):
                 y=df['value_growth_rate'].tolist(),
                 name='Growth Rate(%)',
                 mode='lines+markers',
+                line=dict(color='#ff6a00', width=2),
                 yaxis='y2'
             )
         )
@@ -83,21 +85,21 @@ class Graph_For_Data(Logs):
             title_text=fig_title,
             title="US Real GDP and Quarterly Growth Rate",
             title_x=0.5,
-            title_y=0.90,
+            title_y=0.94,
             font=dict(size=9.5,weight=500,color='#E8EAF6',textcase='normal',shadow='0px 1px 2px #9FA8DA'),
             hovermode="x unified",
+
 
             legend=dict(
                 orientation='h',
                 yanchor='bottom',
-                y=1.02,
+                y=1.00,
                 xanchor= 'center',
                 x=0.5,
                 bgcolor='rgba(0,0,0,0)',
 
             ),
-            margin=dict(l=50,r=50,b=50,t=100,pad=4),
-
+            margin=dict(l=54,r=10,b=50,t=100,pad=5),
             xaxis=dict(
                 title_text="Date (Quarterly)",
                 type='date',

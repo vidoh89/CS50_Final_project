@@ -84,7 +84,8 @@ class FRED_GDP_UI(Logs):
                     ),
                     # Graph card
                     ui.div(
-                        ui.output_ui("gdp_growth_plot"),
+                        #ui.output_ui("gdp_growth_plot"),
+                        output_widget("gdp_growth_plot"),
                         class_="plot_card",
                     ),
                     class_="main-container",
