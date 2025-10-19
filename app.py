@@ -1,27 +1,16 @@
 import pandas as pd
-import plotly.express as px
 import logging
-import os
-import plotly.graph_objects as go
 import pathlib
-import shiny
-import shinywidgets
 from dotenv import load_dotenv
 from shiny import App, Inputs, Outputs, Session, render, ui, reactive
-import theme_style
 from logs.logs import Logs
-from typing import Optional, Union
-from app_ui.navbar import Navbar
-from htmltools import TagList, div
 from shinywidgets import output_widget, render_widget
-from utils.fred_data_cleaner import Fred_Data_Cleaner
-from app_ui.graph_data import Graph_For_Data
 from server.app_server import GDP_DATA_SERVER
 
 # Load environment variables
 load_dotenv()
 
-
+app_dir = pathlib.Path(__file__).parent
 class FRED_GDP_UI(Logs):
     """
     Encapsulates UI and server logic for fred_data module
@@ -33,19 +22,11 @@ class FRED_GDP_UI(Logs):
         super().__init__(name="app module", level=logging.INFO)
         self.gdp_navbar = None
         # Set current file to base directory
-        base_dir = pathlib.Path(__file__).resolve().parent
-        try:
-            self.css_path = base_dir / "theme" / "style.css"
-        except Exception as e:
-            self.error(f"Error handling css file: {e}")
-            self.css_path = None
         self._max_date = None
         self._min_date = None
 
     def gdp_nav_container(self):
         try:
-            base_path = pathlib.Path(__file__).parent.resolve()
-            full_path = base_path / "www" / "theme" / "style.css"
             self._min_date = pd.to_datetime("1987-01-01")
             self._max_date = pd.to_datetime("2025-01-01")
 
@@ -112,7 +93,7 @@ class FRED_GDP_UI(Logs):
             return ui.page_bootstrap(
                 ui.tags.head(
                     ui.tags.title("GDP Growth Rate"),
-                    ui.include_css(full_path)
+                    ui.include_css("www/theme/style.css")
                              ),
                 ui.div(
                     ui.page_navbar(
@@ -134,6 +115,6 @@ server_inst = GDP_DATA_SERVER()
 server = server_inst.get_server()
 base_dir = pathlib.Path(__file__).parent.resolve()
 
-app = App(my_app_ui.gdp_nav_container(), server, static_assets=base_dir / "www")
+app = App(my_app_ui.gdp_nav_container(), server, static_assets=app_dir/"www")
 if __name__ == "__main__":
     app.run()

@@ -466,6 +466,9 @@ ul#main_nav{
 div.plot-container.plotly{
     display:flex;
 }
+.navbar.navbar-default{
+    background-color: var(--background-primary) !important;
+}
 div.user-select-none{
  display:flex;
  justify-content:center;
