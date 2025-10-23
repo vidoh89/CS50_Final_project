@@ -85,7 +85,7 @@ class Graph_For_Data(Logs):
             title_text=fig_title,
             title="US Real GDP and Quarterly Growth Rate",
             title_x=0.5,
-            title_y=0.94,
+            title_y=0.75,
             font=dict(size=9.5,weight=500,color='#E8EAF6',textcase='normal',shadow='0px 1px 2px #9FA8DA'),
             hovermode="x unified",
 
@@ -99,7 +99,7 @@ class Graph_For_Data(Logs):
                 bgcolor='rgba(0,0,0,0)',
 
             ),
-            margin=dict(l=54,r=10,b=50,t=100,pad=5),
+            margin=dict(l=5,r=5,b=50,t=100,pad=5),
             xaxis=dict(
                 title_text="Date (Quarterly)",
                 type='date',

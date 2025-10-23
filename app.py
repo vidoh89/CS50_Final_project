@@ -76,14 +76,55 @@ class FRED_GDP_UI(Logs):
             about_panel = ui.nav_panel(
                 "About",
                 ui.div(
-                    ui.h2("About This Application"),
+                    ui.h2("About the GDP Visualizer"),
                     ui.p(
-                        "This application visualizes US Real GDP and Quarterly Growth Rate data sourced from FRED."
+                        "Welcome! This interactive dashboard was created to explore and visualize ",
+                        "U.S. Real GDP and quarterly growth trends."
                     ),
-                    ui.a(
-                        "Data Source: FRED API",
-                        href="https://fred.stlouisfed.org/",
-                        target="_blank",
+
+                    ui.h4("Project Purpose"),
+                    ui.p(
+                        "This application was developed as the final project for the ",
+                        ui.a(
+                            "CS50 Introduction to Programming with Python",
+                            href="https://cs50.harvard.edu/python/2022/",
+                            target="_blank",
+                        ),
+                        " course from Harvard University. The goal was to demonstrate proficiency ",
+                        "in Python by building a full-stack web application that interacts with a live API."
+                    ),
+
+                    ui.h4("Technology Stack"),
+                    ui.p("This application is built in Python, utilizing the following libraries:"),
+                    ui.tags.ul(
+                        ui.tags.li(ui.tags.strong("Shiny for Python:"), " For the web framework and user interface."),
+                        ui.tags.li(ui.tags.strong("Pandas:"), " For data manipulation and analysis."),
+                        ui.tags.li(ui.tags.strong("Plotly:"), " For creating interactive visualizations."),
+                        ui.tags.li(ui.tags.strong("httpX / requests:"),
+                                   " (or similar) For fetching data from the FRED API.")
+                    ),
+
+                    ui.h4("Data Source"),
+                    ui.p(
+                        "All economic data is sourced from the ",
+                        ui.a(
+                            "Federal Reserve Economic Data (FRED) API",
+                            href="https://fred.stlouisfed.org/",
+                            target="_blank",
+                        ),
+                        "."
+                    ),
+
+                    ui.h4("Developer"),
+                    ui.p(
+                        "Created by Vince Dority. You can view the source code on ",
+                        # Replace with your actual GitHub repo link
+                        ui.a(
+                            "GitHub",
+                            href="https://github.com/vidoh89/CS50_Final_project",
+                            target="_blank",
+                        ),
+                        "."
                     ),
                     class_="main-container",
                 ),
@@ -92,9 +133,14 @@ class FRED_GDP_UI(Logs):
 
             return ui.page_bootstrap(
                 ui.tags.head(
+                    ui.tags.meta(charset="UTF-8"),
+                    ui.tags.meta(name="viewport",content="width=device-width,initial-scale=1.0"),
+                    ui.tags.meta(name="description",content="An application visualizing US Real GDP and Quarterly "
+                                                            "Growth Rate data from FRED."),
                     ui.tags.title("GDP Growth Rate"),
                     ui.include_css("www/theme/style.css")
                              ),
+
                 ui.div(
                     ui.page_navbar(
                         gdp_panel, about_panel, title=gdp_logo, id="main_nav", bg=None

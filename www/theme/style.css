@@ -310,8 +310,11 @@ div nav.navbar{
 .navbar-brand a.Logo img {
   height: 100px;
   width: auto;
-  margin-bottom:3rem;
-  margin-top:-3rem;
+  margin-bottom: 3rem;
+  margin-top: -3rem;
+  position: relative;
+  bottom: 1.5rem;
+  right: 2.7rem;
 
 
 }
@@ -327,6 +330,8 @@ ul#main_nav.navbar-nav{
   flex-direction: row;
   justify-content: center;
   align-content:center;
+  position:relative;
+  bottom:2rem;
 }
 ul#main_nav.navbar-nav.nav a{
  color:var(--md-indigo-50);
@@ -343,9 +348,33 @@ div.container-fluid{
 }
 
 div.container-fluid button.navbar-toggler{
-    margin-bottom:5rem;
-    margin-top:-1rem;
-    border: solid .13rem var(--md-blue-grey-500) !important;
+  margin-bottom: 5rem;
+  margin-top: -1rem;
+  border: solid .13rem var(--md-cyan-200) !important;
+  color: var(--md-cyan-200);
+  position: relative;
+  bottom: 1.5rem;
+  left: 1.6rem;
+}
+button:focus:not(:focus-visible){
+
+   outline:none;
+}
+.navbar-toggler:focus{
+
+    outline:none;
+}
+.navbar-toggler-icon, .navbar-toggle > .icon-bar:last-child{
+
+  display: inline-block;
+  width: 1.5em;
+  height: 1.5em;
+  vertical-align: middle;
+  background-image: var(--bs-navbar-toggler-icon-bg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100%;
+
 }
 div.main-container{
     display:flex;
@@ -417,10 +446,14 @@ a.nav-link{
 ul#main_nav{
     margin-bottom: 1rem;
 }
+.plot-container{
+
+   margin-right:1rem;
+}
 div.plot-container.plotly{
     display:flex;
     margin-top:1rem;
-    margin-right:2rem;
+
 }
 div.user-select-none{
  display:flex;
@@ -516,6 +549,11 @@ div.slider_card h4{
     width:100% !important;
 
 }
+.shiny-ipywidget-output.html-fill-container > .lm-Widget.html-fill-item{
+    margin-right: 4rem !important;
+    margin-left: .3rem !important;
+}
+
 
 svg.main-svg{
     display:flex !important;
@@ -523,6 +561,7 @@ svg.main-svg{
     height:inherit;
     justify-content:center;
     align-items:center;
+
 }
 
 rect{
