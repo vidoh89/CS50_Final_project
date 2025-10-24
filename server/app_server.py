@@ -138,15 +138,15 @@ class GDP_DATA_SERVER(Logs):
                         fig.update_layout(
                             template='plotly_dark',
                             title_text="US Real GDP and Quarterly Growth Rate",
-                            title_x=0.5,
-                            title_y=0.94,
+                            title_x=0.10,
+                            title_y=0.90,
                             font=dict(size=9.5, color='#E8EAF6'),
                             hovermode="x unified",
                             legend=dict(
                                 orientation='h', yanchor='bottom', y=1.00,
                                 xanchor='center', x=0.5, bgcolor='rgba(0,0,0,0)'
                             ),
-                            margin=dict(l=50, r=50, b=50, t=100, pad=5),
+                            margin=dict(l=5, r=110, b=60, t=100, pad=5),
                             xaxis=dict(
                                 title_text="Date (Quarterly)", type='date',
                                 showgrid=True, tickformat="%Y Q%q"

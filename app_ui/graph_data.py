@@ -99,7 +99,7 @@ class Graph_For_Data(Logs):
                 bgcolor='rgba(0,0,0,0)',
 
             ),
-            margin=dict(l=5,r=5,b=50,t=100,pad=5),
+            #margin=dict(l=500,r=5,b=50,t=100,pad=5),
             xaxis=dict(
                 title_text="Date (Quarterly)",
                 type='date',
