@@ -275,9 +275,11 @@
 
 }
 body{
-    width:100% !important;
     background: var(--background-primary)
 
+}
+img{
+    max-width 100% !important;
 }
 div nav{
     width:100%;
@@ -566,4 +568,18 @@ svg.main-svg{
 
 rect{
     width:100%;
+}
+@media screen and (min-width:800px){
+    body{
+         padding:1rem 2rem;
+
+    }
+    .page-container{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    max-width:100%;
+    width:100%;
+    background-color: var(--background-primary);
 }
