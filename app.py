@@ -82,7 +82,7 @@ class FRED_GDP_UI(Logs):
                         "U.S. Real GDP and quarterly growth trends."
                     ),
 
-                    ui.h4("Project Purpose"),
+                    ui.h2("Project Purpose"),
                     ui.p(
                         "This application was developed as the final project for the ",
                         ui.a(
@@ -94,17 +94,17 @@ class FRED_GDP_UI(Logs):
                         "in Python by building a full-stack web application that interacts with a live API."
                     ),
 
-                    ui.h4("Technology Stack"),
+                    ui.h2("Technology Stack"),
                     ui.p("This application is built in Python, utilizing the following libraries:"),
                     ui.tags.ul(
                         ui.tags.li(ui.tags.strong("Shiny for Python:"), " For the web framework and user interface."),
                         ui.tags.li(ui.tags.strong("Pandas:"), " For data manipulation and analysis."),
                         ui.tags.li(ui.tags.strong("Plotly:"), " For creating interactive visualizations."),
-                        ui.tags.li(ui.tags.strong("httpX / requests:"),
-                                   " (or similar) For fetching data from the FRED API.")
+                        ui.tags.li(ui.tags.strong("aiohttp / requests:"),
+                                   " For fetching data from the FRED API.")
                     ),
 
-                    ui.h4("Data Source"),
+                    ui.h2("Data Source"),
                     ui.p(
                         "All economic data is sourced from the ",
                         ui.a(
@@ -115,7 +115,7 @@ class FRED_GDP_UI(Logs):
                         "."
                     ),
 
-                    ui.h4("Developer"),
+                    ui.h2("Developer"),
                     ui.p(
                         "Created by Vince Dority. You can view the source code on ",
                         # Replace with your actual GitHub repo link
