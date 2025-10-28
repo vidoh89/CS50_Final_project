@@ -293,9 +293,12 @@ div nav.navbar{
     display:flex;
     justify-content:center;
     max-width:100%;
-    border-bottom: solid .13rem var(--md-blue-grey-400) !important;
+    border-bottom: solid .13rem var(--md-cyan-500) !important;
     margin-top: 2rem;
-    width:100%;
+    width:90%;
+}
+div nav:hover{
+    border-bottom: solid .13rem (--md-cyan-200) !important;
 }
 .page-container{
     display:flex;
@@ -318,9 +321,11 @@ div.main-container{
 }
 .tab-content{
    display:flex;
-   flex-direction: column;
+   flex-direction: row;
    width:90%;
-   margin-right:3rem;
+   justify-content: center;
+   align-items: center;
+
 
 
 }
@@ -394,7 +399,7 @@ div.container-fluid{
 div.container-fluid button.navbar-toggler{
   margin-bottom: 5rem;
   margin-top: -1rem;
-  border: solid .13rem var(--md-cyan-200) !important;
+  border: solid .1rem var(--md-cyan-200) !important;
   color: var(--md-cyan-200);
   position: relative;
   bottom: 1.5rem;
@@ -457,7 +462,7 @@ a.slider-animate-button.link-secondary span.pause{
 a.nav-link.active{
 
   color: var(--md-cyan-200) !important;
-  margin-right:2rem;
+
 }
 ul#main_nav.nav{
     display:flex;
@@ -472,14 +477,19 @@ a.nav-link{
    height:50px;
     border: 2px solid transparent;
     border-radius: 50px;
-    margin:auto;
     transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 
+}
+.nav-item:not(.active){
+
+    margin:1rem;
 }
 .nav-item:not(.active) .nav-link:hover{
     background-color: var(--md-cyan-200);
     border-color: var(--md-cyan-200);
     color: var(--md-indigo-50);
+
+
 }
 ul#main_nav{
     margin-bottom: 1rem;
@@ -548,6 +558,8 @@ div.user-select-none{
 div.slider_card{
     display:flex;
     flex-direction:column;
+    width:100%;
+    margin-left:1rem;
 }
 label#date_range-label{
    margin-top:3rem;
@@ -555,18 +567,28 @@ label#date_range-label{
    flex: 1 1 50%;
    font-size: .85rem;
 }
+.slider_card{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-content: flex-start;
+
+}
 div.slider_card h4{
+    width:fit-content;
+    font-size: 2rem ;
     margin-top:4rem;
-    margin-right:3rem;
-    padding:1rem;
+    padding:.8rem;
+    margin-left:10%;
     text-align: center;
-    border-left: solid .1rem var(--md-cyan-100);
-    border-right:solid .1rem var(--md-cyan-300);
     border-bottom:solid .1rem var(--md-cyan-400);
     border-top: solid .1rem var(--md-cyan-200);
     border-radius: 2rem;
     text-shadow: 0px 2px 3px var(--md-cyan-500);
+    font-size:x-large;
 }
+
+
 
 .form-group{
     display:flex;
@@ -631,5 +653,20 @@ rect{
            font-size:1rem;
 
     }
+    .slider_card h4{
+
+        font-size: 1.5rem !important;
+        align-items: center !important;
+        margin-left:25rem !important;
+        padding-left:1rem  !important;
+        padding-right: 1rem !important;
+    }
 
 }
+@media screen and (min-width:1000px){
+    .slider_card h4{
+        margin-left:30rem !important;
+    }
+
+}
+
