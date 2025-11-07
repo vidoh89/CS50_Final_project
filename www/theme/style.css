@@ -293,9 +293,9 @@ div nav.navbar{
     display:flex;
     justify-content:center;
     max-width:100%;
-    border-bottom: solid .13rem var(--md-cyan-500) !important;
+    border-bottom: solid .23rem var(--md-cyan-500) !important;
     margin-top: 2rem;
-    width:90%;
+    width:95%;
 }
 div nav:hover{
     border-bottom: solid .13rem (--md-cyan-200) !important;
@@ -354,7 +354,6 @@ li::marker{
     color: var(--md-cyan-100);
 
 }
-
 
 .navbar-brand a.Logo img {
   height: 100px;
