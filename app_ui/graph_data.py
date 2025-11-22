@@ -29,7 +29,7 @@ class Graph_For_Data(Logs):
             go.Figure]:
         """
         Graphing component for GRAPH_FOR_DATA object
-        :param fig_title:
+        :param fig_title: Sets the main title for the graph
         :param df: Data frame containing clean GDP data
         :type df: pd.DataFrame
         :return: A plotly.graph_objects.Figure object.

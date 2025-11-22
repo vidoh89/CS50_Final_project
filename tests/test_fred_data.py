@@ -268,3 +268,48 @@ async def test_get_series_obs_correct_params(caplog):
         extra_params
     )
     await fred_client.session.close()
+
+@pytest.mark.asyncio
+async def test_session_property_lifecycle():
+    """
+    Test if session property reuses open sessions and creates
+    new ones if session is closed or None
+    """
+    fred_client = FRED_API(api_key="TEST_KEY")
+
+    # test session 1 is reused for session 2
+    session_1 = fred_client.session
+    session_2 = fred_client.session
+    assert session_1 is session_2
+    assert not session_1.closed
+
+    await session_1.close()
+    assert session_1.closed
+
+    session_3 = fred_client.session
+
+    assert session_1 is not session_3
+    assert not session_3.closed
+    await session_3.close()
+
+@pytest.mark.asyncio
+
+async def test_session_close():
+    """
+    Test that the __aexit__ method closes an open session
+    """
+    # Create a mock session
+    mock_session = AsyncMock()
+    mock_session.closed = False
+
+    # Patch aiohttp ClientSession
+    with patch("aiohttp.ClientSession",return_value =mock_session) as mock_constructor:
+        async with FRED_API(api_key="TEST_KEY") as fred_client:
+            # access session to trigger creation
+            _ = fred_client.session
+
+            # Ensure session is not closed
+            mock_session.close.assert_not_called()
+    mock_session.close.assert_called_once()
+
+
