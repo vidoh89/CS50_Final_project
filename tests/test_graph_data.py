@@ -88,6 +88,23 @@ def test_graph_layout_xaxis(grapher,valid_df):
     assert test_layout.type =='date'
     assert test_layout.tickformat=='%Y Q%q'
     assert test_layout.tickfont.size ==6
+def test_graph_layout_yaxis(grapher,valid_df):
+    test_graph = grapher.graph_generator(df=valid_df,fig_title='TEST_DATA_yaxis')
+    test_layout_y = test_graph.layout.yaxis
+    assert test_layout_y.title.text == "Real GDP($B)"
+    assert test_layout_y.showgrid == True
+    assert test_layout_y.zerolinewidth == 2
+    assert test_layout_y.zerolinecolor == 'LightGrey'
+    assert test_layout_y.type =='linear'
+    assert test_layout_y.titlefont.size==10
+    assert test_layout_y.tickfont.size==10
+def test_graph_final_info_msg(grapher,valid_df,caplog):
+    caplog.set_level(logging.INFO)
+    target_msg = logging.getLogger('Graphing module')
+    target_msg.addHandler(caplog.handler)
+    grapher.graph_generator(df=valid_df,fig_title='TEST_LOGS')
+    assert "Manual Plotly figure successfully generated" in caplog.text
+
 
 
 
