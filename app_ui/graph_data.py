@@ -48,9 +48,10 @@ class Graph_For_Data(Logs):
                     df = df.set_index('date')
                 else:
                     self.error("No 'date' column for conversion.")
+                    return go.Figure()
 
             except Exception as e:
-                self.error(f"Error converting DataFrame index to DateIndex: {e}")
+                self.error(f"Error converting DataFrame index to DatetimeIndex: {e}")
                 return go.Figure()
 
         # Create a new Figure()

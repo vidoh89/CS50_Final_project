@@ -104,6 +104,101 @@ def test_graph_final_info_msg(grapher,valid_df,caplog):
     target_msg.addHandler(caplog.handler)
     grapher.graph_generator(df=valid_df,fig_title='TEST_LOGS')
     assert "Manual Plotly figure successfully generated" in caplog.text
+def test_empty_df(grapher,caplog):
+    """
+    Verify correctly handling of empty dataframe
+    :param grapher:
+    :param caplog:
+    :return:
+    """
+    caplog.set_level(logging.WARNING)
+    target_warning_msg = logging.getLogger('Graphing module')
+    target_warning_msg.addHandler(caplog.handler)
+    empty_data = pd.DataFrame(data=None)
+    test_graph = grapher.graph_generator(df=empty_data,fig_title='TEST_EMPTY_DF')
+
+    assert isinstance(test_graph,go.Figure)
+    assert len(test_graph.data) ==0
+    assert "DataFrame has no content,returning empty Figure." in caplog.text
+def test_incorrect_index(grapher,caplog):
+    """
+    Ensures that a none DatetimeIndex type raises an error when index values are not of type(pd.DatetimeIndex)
+    :param grapher:
+    :param caplog:
+    :return:
+    """
+    caplog.set_level(logging.ERROR)
+    inc_index = ['2020-01-01','2021-01-01','2022-01-01']
+    test_data =  {
+            "value":[100,140,150],
+            "value_growth_rate": [1.0, 5.0, 4.7]
+    }
+    test_df= pd.DataFrame(data=test_data,index=inc_index)
+    target_msg_error = logging.getLogger('Graphing module')
+    target_msg_error.addHandler(caplog.handler)
+    test_graph = grapher.graph_generator(df=test_df,fig_title='TEST_INDEX_ERROR')
+    assert isinstance(test_graph,go.Figure)
+    assert len(test_graph.data) == 0
+    assert 'DataFrame index is not a DatetimeIndex. Attempting auto conversion' in caplog.text
+    assert "No 'date' column for conversion." in caplog.text
+
+def test_auto_conversion(grapher,caplog):
+    """
+    Test that dates are correctly converted to a DatetimeIndex object automatically
+    :param grapher:
+    :param caplog:
+    :return:
+    """
+    caplog.set_level(logging.INFO)
+
+    test_values = {
+        "date":['2021-01-01','2022-01-01','2023-01-01'],
+        "value":[100,140,150],
+        "value_growth_rate":[1.0,5.0,4.7]
+    }
+
+    test_df = pd.DataFrame(data=test_values)
+    test_logs = logging.getLogger('Graphing module')
+    test_logs.addHandler(caplog.handler)
+    test_graph = grapher.graph_generator(df=test_df,fig_title='TEST_INDEX_AUTO_CONVERSION')
+    assert isinstance(test_graph,go.Figure)
+    assert len(test_graph.data) ==2
+    assert 'DataFrame index is not a DatetimeIndex. Attempting auto conversion' in caplog.text
+    assert 'Manual Plotly figure successfully generated' in caplog.text
+
+@pytest.mark.filterwarnings('ignore::UserWarning')
+def test_bad_dates(caplog,grapher):
+    """
+    Test that an error is logged if the dates are not able
+    to be converted, to a DatetimeIndex
+    :param caplog: captures logging messages
+    :param grapher: holds go.Figure object
+    :return:
+    """
+    caplog.set_level(logging.ERROR)
+    target_error_msg = logging.getLogger('Graphing module')
+    target_error_msg.addHandler(caplog.handler)
+    # construct df with bad data to force an exception
+    bad_data = {
+        'date':['lizard-king','Squid'],
+        'value':[100,200],
+        'value_growth_rate':[0.1,0.2]
+    }
+    bad_df = pd.DataFrame(data=bad_data)
+    test_graph = grapher.graph_generator(df=bad_df,fig_title='TEST FINAL EXCEPTION')
+    assert isinstance(test_graph,go.Figure)
+    assert len(test_graph.data) == 0
+    assert 'Error converting DataFrame index' in caplog.text
+
+
+    
+
+
+    
+
+
+
+
 
 
 
