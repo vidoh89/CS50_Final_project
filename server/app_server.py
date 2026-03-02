@@ -25,7 +25,7 @@ class GDP_DATA_SERVER(Logs):
     """
 
     def __init__(self):
-        super().__init__(name='Server module', level=logging.INFO)
+        super().__init__(name="Server module", level=logging.INFO)
 
         # Initialize instance variables
         self.get_graph = Get_Data()
@@ -35,6 +35,23 @@ class GDP_DATA_SERVER(Logs):
         if self.gdp_df is None or self.gdp_df.empty:
             self.warning("Failed to load GDP data or Dataframe is empty.")
         self.fred_client = FRED_API()
+
+    def get_dates_dynamically(self) -> tuple[pd.Timestamp, pd.Timestamp]:
+        """
+        Provides min/max dates for initial slider values
+
+        :return: tuple[pd.Timestamp(start_date),pd.Timestamp(end_date)]
+        """
+        # Manual fallback for dates
+        fallback_min_date = pd.to_datetime("1987-01-01")
+        fallback_max_date = pd.to_datetime("2025-01-01")
+        if self.gdp_df is not None and not self.gdp_df.empty:
+            if isinstance(self.gdp_df.index,pd.DatetimeIndex):
+                self.info(f"Using dates from static data:{self.gdp_df.index.min().strftime('%Y-%m-%d')} to {self.gdp_df.index.max().strftime('%Y-%m-%d')}")
+                return self.gdp_df.index.min(),self.gdp_df.index.max()
+            self.warning('Could not parse static dates from dataframe, using fallback_min/max values')
+            return fallback_min_date,fallback_max_date
+
 
     def get_server(self):
         """
@@ -58,115 +75,67 @@ class GDP_DATA_SERVER(Logs):
                 """
                 await asyncio.sleep(0.1)
                 if not self.fred_client:
-                    self.warning('Error fetching data from fred client using slider values provided')
+                    self.warning(
+                        "Error fetching data from fred client using slider values provided"
+                    )
                     return ui.p("Error: Fred client not initialized.")
 
                 try:
                     # get start and end dates from input slider
                     start_date, end_date = input.date_range()
-                    #start_date = pd.to_datetime("2020-01-01")
-                    #end_date = pd.to_datetime("2024-01-01")
-                    self.info(f'Slider date range selected {start_date} to{end_date}')
+                    # start_date = pd.to_datetime("2020-01-01")
+                    # end_date = pd.to_datetime("2024-01-01")
+                    self.info(f"Slider date range selected {start_date} to{end_date}")
                     # format dates str('Year-month-date')
-                    start_date_str = start_date.strftime('%Y-%m-%d')
-                    end_date_str = end_date.strftime('%Y-%m-%d')
+                    start_date_str = start_date.strftime("%Y-%m-%d")
+                    end_date_str = end_date.strftime("%Y-%m-%d")
 
                     # API call parameters
                     gdp_params = {
-                        'observation_start': start_date_str,
-                        'observation_end': end_date_str
+                        "observation_start": start_date_str,
+                        "observation_end": end_date_str,
                     }
-                    self.info(f"Fetching data for series <GDPC1> ,Params: {gdp_params} ")
+                    self.info(
+                        f"Fetching data for series <GDPC1> ,Params: {gdp_params} "
+                    )
 
                     async with self.fred_client:
-                        df = await self.fred_client.get_series_obs('GDPC1', params=gdp_params)
+                        df = await self.fred_client.get_series_obs(
+                            "GDPC1", params=gdp_params
+                        )
                     if df is None or df.empty:
-                        self.warning('No data returned from FRED API for the selected date range')
+                        self.warning(
+                            "No data returned from FRED API for the selected date range"
+                        )
                         return ui.p(
                             "No data available for the selected date range.",
-                            style="text-align:center;padding:2rem;"
+                            style="text-align:center;padding:2rem;",
                         )
 
                     cleaner = Fred_Data_Cleaner(df=df)
                     gdp_df = (
-                        cleaner
-                        .handle_missing_values()
+                        cleaner.handle_missing_values()
                         .replace_columns()
                         .str_to_numb()
                         .calculate_pct_change()
                         .get_cleaned_data()
                     )
 
-                    self.info('Successfully transformed GDP data.')
+                    self.info("Successfully transformed GDP data.")
                     if gdp_df is not None and not gdp_df.empty:
-                        self.info(f"Generating plot HTML with {len(gdp_df)} data points")
-                        # fig = self.graph_creator.graph_generator(df=gdp_df)
-                        # print(gdp_df.head())
-                        # print(gdp_df.info())
-
-                        # html_content = fig.to_html(
-                        #     full_html=False,
-                        #     config={'responsive':True},
-                        #     div_id="custom_graph_scheme",
-                        #
-                        #     )
-                        # print(type(html_content))
-                        fig=go.Figure()
-                        fig.add_trace(
-                            go.Scatter(
-                                x=gdp_df.index,
-                                y=gdp_df['value'],
-                                name='Real GDP(Billions)',
-                                mode='lines+markers',
-                                line=dict(color='cyan', width=2),
-                            )
+                        self.info(
+                            f"Generating plot HTML with {len(gdp_df)} data points"
                         )
-
-                        # adds second trace for the gdp (Growth Rate)
-                        fig.add_trace(
-                            go.Scatter(
-                                x=gdp_df.index,
-                                y=gdp_df['value_growth_rate'],
-                                name='Growth Rate(%)',
-                                mode='lines+markers',
-                                yaxis='y2',
-                                line=dict(color='#ff6a00', width=2)
-                            )
-                        )
-
-                        # update figure layout
-                        fig.update_layout(
-                            template='plotly_dark',
-                            title_text="US Real GDP and Quarterly Growth Rate",
-                            title_x=0.10,
-                            title_y=0.90,
-                            font=dict(size=9.5, color='#E8EAF6'),
-                            hovermode="x unified",
-                            legend=dict(
-                                orientation='h', yanchor='bottom', y=1.00,
-                                xanchor='center', x=0.5, bgcolor='rgba(0,0,0,0)'
-                            ),
-                            margin=dict(l=5, r=110, b=60, t=100, pad=5),
-                            xaxis=dict(
-                                title_text="Date (Quarterly)", type='date',
-                                showgrid=True, tickformat="%Y Q%q"
-                            ),
-                            yaxis=dict(
-                                title_text="Real GDP($B)", showgrid=True,
-                                zerolinewidth=2, zerolinecolor='LightGrey'
-                            ),
-                            yaxis2=dict(
-                                title_text="Growth Rate (%)", overlaying='y',
-                                side='right', showgrid=False, zeroline=True,
-                                zerolinewidth=2, zerolinecolor='LightGrey'
-                            )
-                        )
+                        fig = self.graph_creator.graph_generator(df=gdp_df)
                         return fig
                     else:
-                        self.warning('Dataframe is empty after processing; rendering default message.')
+                        self.warning(
+                            "Dataframe is empty after processing; rendering default message."
+                        )
                         return go.Figure()
                 except Exception as e:
-                    self.error(f'An error occurred while fetching FRED data:{e}')
+                    import traceback
+                    self.error(f"An error occurred while fetching FRED data:{e}\nTraceback:\n{traceback.format_exc()}")
                     return go.Figure()
 
         return server

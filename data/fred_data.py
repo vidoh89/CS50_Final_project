@@ -44,7 +44,8 @@ class FRED_API(Logs):
         if not self.API_KEY:
             self.error("Could not load API_KEY:Loading parameters from os variable.")
             raise ValueError("Must provide api_key or set as an environment variable.")
-        self._session: Optional[aiohttp.ClientSession] = None
+        #self._session: Optional[aiohttp.ClientSession] = None
+
 
     async def __aenter__(self):
         """
@@ -52,6 +53,8 @@ class FRED_API(Logs):
         :return:
         """
         self.info("Entering async context manager")
+        if not hasattr(self,'_session') or self._session is None or self._session.closed:
+            self._session = aiohttp.ClientSession()
         return self
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         """
@@ -72,9 +75,9 @@ class FRED_API(Logs):
         :return: Returns the session or a single aiohttp.ClientSession
         :rtype: Optional[aiohttp.ClientSession]
         """
-        if self._session is None or self._session.closed:
-            self._session = aiohttp.ClientSession()
-
+        if not hasattr(self,'_session') or self._session is None or self._session.closed:
+            self.error('Could not retrieve instance for client session')
+            raise RuntimeError("Session accessed outside of 'async with' context")
         return self._session
 
     async def _request_data(
@@ -89,18 +92,23 @@ class FRED_API(Logs):
 
         """
         full_url = f"{self.BASE_LINK}{endpoint}"
-        params.update(
-            {"api_key": self.API_KEY, "file_type": "json"}
-        )  # set key/value- api_key:API_KEY,"file_type":"json"
+
+        #payload variable to set params,api_key, and file_type
+        self.info("Constructing payload")
+        payload = {
+            **params,
+            "api_key":self.API_KEY,
+            "file_type":"json"
+        }
 
         try:
             self.info(f"Request sent to:{full_url},parameters used: {params}")
-            session = self.session
-            async with self.session.get(full_url, params=params) as response:
+            # Create request for data
+            async with self._session.get(full_url,params=payload) as response:
                 response.raise_for_status()
-                await_data = await response.json()
-                self.info("Successful request made.")
-                return await_data
+                data = await response.json()
+                self.info("Successful request made")
+                return data 
 
         except aiohttp.ClientResponseError as http_e:
             self.error(f"Http error occurred: {http_e}")

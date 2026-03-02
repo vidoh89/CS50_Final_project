@@ -18,17 +18,20 @@ class FRED_GDP_UI(Logs):
 
     LANG_CONST = tuple(["en", "es", "fr", "de", "ja", "ko", "zh-CN", "zh-TW"])
 
-    def __init__(self):
+    def __init__(self,min_date:pd.Timestamp,max_date:pd.Timestamp):
         super().__init__(name="app module", level=logging.INFO)
         self.gdp_navbar = None
         # Set current file to base directory
-        self._max_date = None
-        self._min_date = None
+        self._max_date = max_date
+        self._min_date = min_date
 
     def gdp_nav_container(self):
         try:
-            self._min_date = pd.to_datetime("1987-01-01")
-            self._max_date = pd.to_datetime("2025-01-01")
+            # set default dates
+            default_start = self._max_date - pd.DateOffset(years=5)
+            # check default_start date is not less than min date
+            if default_start < self._min_date:
+                default_start = self._min_date
 
             # Object to hold logo
             gdp_logo = ui.tags.a(
@@ -131,21 +134,20 @@ class FRED_GDP_UI(Logs):
             )
             ####################
 
-            return ui.page_bootstrap(
-                ui.tags.head(
+            return ui.page_navbar(
+                gdp_panel,
+                about_panel,
+                title=gdp_logo,
+                bg=None,
+                window_title="GDP Growth Rate",
+                header=ui.tags.head(
                     ui.tags.meta(charset="UTF-8"),
                     ui.tags.meta(name="viewport",content="width=device-width,initial-scale=1.0"),
                     ui.tags.meta(name="description",content="An application visualizing US Real GDP and Quarterly "
                                                             "Growth Rate data from FRED."),
                     ui.tags.title("GDP Growth Rate"),
                     ui.include_css("www/theme/style.css")
-                             ),
 
-                ui.div(
-                    ui.page_navbar(
-                        gdp_panel, about_panel, title=gdp_logo, id="main_nav", bg=None
-                    ),
-                    class_="page-container"
                 )
             )
 
@@ -154,8 +156,11 @@ class FRED_GDP_UI(Logs):
             return ui.page_fluid(ui.p("Error building the application ui"))
 
 
-my_app_ui = FRED_GDP_UI()
 server_inst = GDP_DATA_SERVER()
+
+min_d, max_d = server_inst.get_dates_dynamically()
+my_app_ui = FRED_GDP_UI(min_date=min_d,max_date=max_d)
+
 
 # call server method
 server = server_inst.get_server()
