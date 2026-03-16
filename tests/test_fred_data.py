@@ -3,6 +3,9 @@ import pandas as pd
 import os
 import logging
 from unittest.mock import patch, Mock, AsyncMock, MagicMock
+
+import pytest_aiohttp
+
 from data.fred_data import FRED_API
 import requests
 import aiohttp
@@ -34,7 +37,6 @@ def test_api_key_value_error(caplog):
 async def test_successful_request():
     """
     Mocks a successful request for data, made to the FRED_API
-    :return:
     """
     # Setup mock response
     mock_response = AsyncMock()
@@ -59,3 +61,102 @@ async def test_successful_request():
 
             assert data is not None
             assert data["observations"][0]['value'] == '124.45'
+@pytest.mark.asyncio
+async def test_failed_request(caplog):
+    """
+    Mocks a failed request made to the FRED_API
+    """
+    # mock response for request
+    mock_response= MagicMock()
+    # mock bad request value
+    mock_response.status= 400
+    # Trigger exception
+
+    # mock json data for requested data
+    mock_response.json= AsyncMock(return_value={'error':'Invalid Request'})
+    # mock session instance
+    mock_session_instance = MagicMock()
+    mock_session_instance.get.return_value.__aenter__.return_value = mock_response
+    # mock error behavior
+    mock_response.raise_for_status.side_effect= aiohttp.ClientResponseError(
+        request_info=MagicMock(),
+        history=MagicMock(),
+        status=400,
+        message='Bad Request'
+   )
+    #isolate session using patch
+    with patch("aiohttp.ClientSession",return_value=mock_session_instance):
+        # mock request for data
+        async with FRED_API(api_key="TEST_INVALID_REQUEST") as fred_client:
+            # capture error logs
+            with caplog.at_level(logging.ERROR):
+                fred_client._logger.addHandler(caplog.handler)
+                data = await fred_client._request_data("series/observations",{"series_id":"TEST"})
+
+            assert data is None
+            assert "Http error occurred" in caplog.text
+@pytest.mark.asyncio
+async def test_bad_session_input(caplog):
+    """
+    Test for bad input to client session object
+    :param caplog: captures logging errors
+    """
+    # mock response
+    mock_response = MagicMock()
+    # mock bad status code
+    mock_response.status= 404
+    # mock error to be raised
+    mock_response.raise_for_status.side_effect= aiohttp.ClientResponseError(
+        request_info=MagicMock(),
+        history=MagicMock(),
+        status=404,
+        message='Not Found'
+    )
+    # Set up the mock session
+    mock_session= MagicMock()
+    # mock session __aenter__ with response
+    mock_session.get.return_value.__aenter__.return_value= mock_response
+
+    # patch session
+    with patch('data.fred_data.aiohttp.ClientSession',return_value=mock_session):
+        async with FRED_API(api_key='TEST') as fred:
+            # attach logger
+            fred._logger.addHandler(caplog.handler)
+            with caplog.at_level(logging.ERROR):
+                response= await fred._request_data("invalid/endpoint",{})
+
+        # Assertions
+        assert response is None
+        assert "Http error occurred" in caplog.text
+        assert "404" in caplog.text
+        assert "Not Found" in caplog.text
+
+
+
+
+@pytest.mark.asyncio
+async def general_failure(caplog):
+    """
+    Mock for general Exceptions
+    :param caplog:
+    """
+    # Mock response variable
+    mock_response= MagicMock()
+    # Mock general error
+    mock_response.json.side_effect= Exception('System Crash')
+    # Mock session
+    mock_session= MagicMock()
+    # Set the Mock's return_value
+    mock_session.get.return_value.__aenter__.return_value= mock_response
+    # Patch the session
+    with patch('data.fred_data.aiohttp.ClientSession',return_value=mock_session):
+        async with FRED_API(api_key='TEST') as fred:
+            fred._logger.addHandler(caplog.handler)
+            # await response
+            response = await fred._request_data("some/endpoint",{})
+    assert response is None
+    assert "Error occurred while fetching data" in caplog.text
+    assert "System Crash" in caplog.text
+
+
+
