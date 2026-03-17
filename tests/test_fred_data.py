@@ -131,9 +131,6 @@ async def test_bad_session_input(caplog):
         assert "404" in caplog.text
         assert "Not Found" in caplog.text
 
-
-
-
 @pytest.mark.asyncio
 async def general_failure(caplog):
     """
@@ -158,5 +155,30 @@ async def general_failure(caplog):
     assert "Error occurred while fetching data" in caplog.text
     assert "System Crash" in caplog.text
 
+@pytest.mark.asyncio
+async def test_series_obs(caplog):
+    """
+    Test for successful parameter input and DataFrame processing.
+    :param caplog: Captures log messages
+    """
+    # Mock payload data
+    mock_api_data= {'observations':[
+        {'date':"2020-01-01",'value':'10.5'},
+        {'date':"2020-01-02",'value':'11.3'},
+        {'date':"2020-01-03",'value':'.'} # test none numeric data
+    ]}
+    # Setup for mocks
+    mock_response= MagicMock()
+    mock_response.status= 200
+    # mock to await data
+    mock_response.json= AsyncMock(return_value=mock_api_data)
+    # mock session
+    mock_session= MagicMock()
+    mock_session.get.return_value.__aenter__.return_value= mock_response
 
-
+    # patch fred_data session
+    with patch('data.fred_data.aiohttp.ClientSession',return_value=mock_session):
+        # Initialize FRED_API
+        async with FRED_API(api_key='TEST_KEY') as fred:
+            df = await fred.get_series_obs("GDP")
+    assert isinstance(df,pd.DataFrame)
