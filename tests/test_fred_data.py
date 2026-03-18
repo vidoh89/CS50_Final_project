@@ -182,3 +182,10 @@ async def test_series_obs(caplog):
         async with FRED_API(api_key='TEST_KEY') as fred:
             df = await fred.get_series_obs("GDP")
     assert isinstance(df,pd.DataFrame)
+    assert not df.empty
+    assert df.index.name == 'date'
+    assert 'value' in df.columns
+    assert (df['value'] ==10.5).any()
+    assert (df['value']== 11.3).any()
+    assert len(df) ==2
+    assert '2020-01-03' not in df.index
