@@ -189,3 +189,7 @@ async def test_series_obs(caplog):
     assert (df['value']== 11.3).any()
     assert len(df) ==2
     assert '2020-01-03' not in df.index
+    assert (df.index==pd.to_datetime('2020-01-01')).any()
+    assert (df.index==pd.to_datetime('2020-01-02')).any()
+    assert (isinstance(df.index,pd.DatetimeIndex))
+
