@@ -180,6 +180,7 @@ async def test_series_obs(caplog):
     with patch('data.fred_data.aiohttp.ClientSession',return_value=mock_session):
         # Initialize FRED_API
         async with FRED_API(api_key='TEST_KEY') as fred:
+            fred._logger.addHandler(caplog.handler)
             df = await fred.get_series_obs("GDP")
     assert isinstance(df,pd.DataFrame)
     assert not df.empty
@@ -192,4 +193,13 @@ async def test_series_obs(caplog):
     assert (df.index==pd.to_datetime('2020-01-01')).any()
     assert (df.index==pd.to_datetime('2020-01-02')).any()
     assert (isinstance(df.index,pd.DatetimeIndex))
+    assert "Successfully processed observation data for series_id" in caplog.text
 
+@pytest.mark.asyncio
+async def test_bad_series_obs(caplog):
+    """
+    Test that get_series_obs returns None when no observation is returned by
+    the API.
+    :param caplog:
+    :return:
+    """
