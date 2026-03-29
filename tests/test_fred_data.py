@@ -203,3 +203,26 @@ async def test_bad_series_obs(caplog):
     :param caplog:
     :return:
     """
+    # mock incorrect keys
+    mock_data= {'realtime_start':'2020-01-01',
+                'realtime_start':'2020-01-01'
+                }
+    mock_response= MagicMock()
+    mock_response.status= 200
+    mock_response.json= AsyncMock(return_value=mock_data)
+
+    mock_session= MagicMock()
+    mock_session.get.return_value.__aenter__.return_value=mock_response
+
+    with patch('data.fred_data.aiohttp.ClientSession',return_value=mock_session):
+        async with FRED_API(api_key='TEST_KEY') as fred:
+            fred._logger.addHandler(caplog.handler)
+            with caplog.at_level(logging.WARNING):
+                # Test for invalid series_id
+                df= await fred.get_series_obs("INVALID_SERIES")
+
+    assert df is None
+    assert 'No observation found for series:INVALID_SERIES' in caplog.text
+
+
+
