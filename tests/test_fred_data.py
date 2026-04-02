@@ -223,6 +223,24 @@ async def test_bad_series_obs(caplog):
 
     assert df is None
     assert 'No observation found for series:INVALID_SERIES' in caplog.text
+@pytest.mark.asyncio
+async def test_empty_obs_key(caplog):
+    """
+    Test to ensure get_series_obs returns empty df as expected,
+    if missing observations key
+    """
+    mock_data= {"realtime_value":"2020-01-01"}
+    mock_response= MagicMock()
+    mock_response.status=200
+    mock_response.json= AsyncMock(return_value=mock_data)
 
+    mock_session= MagicMock()
+    mock_session.get.return_value.__aenter__.return_value= mock_response
+
+    with patch('data.fred_data.aiohttp.ClientSession',return_value=mock_session):
+        async with FRED_API(api_key='TEST_MISSING_KEY') as fred:
+            result= await fred.get_series_obs("BAD_ID")
+    assert result is None
+    assert mock_response.status ==200
 
 
