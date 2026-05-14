@@ -1,8 +1,13 @@
+import asyncio
+
 from data.fred_data import FRED_API
 import os
 import pandas as pd
 from datetime import datetime
 from dotenv import load_dotenv
+from data.fred_data import FRED_API
+from typing import Optional, Dict, Union
+from utils.fred_data_cleaner import Fred_Data_Cleaner
 
 # load environment variables
 load_dotenv()
@@ -61,15 +66,63 @@ Start:With implementing logs for tracking
 1st. Begin with the data fetching and processing
 2nd. Plot data
 """
-def main():
 
-    print("Hello, World")
-def function_1():
-    ...
-def function_2():
-    ...
+
+def main():
+    series_id ='GDPC1' # Variable to hold asset
+    data= get_data(series_id)
+    new_df=clean_data(data)
+    print(f'New data frame successfully transformed:->{new_df}')
+def get_data(series_id: Optional[str]) -> pd.DataFrame:
+    """
+    Fetches data from FRED_API object
+    :param series_id: Asset name
+    :type series_id:str
+    :raise Exception: If no observation is returned
+    :return: Union[Dict,None]
+    """
+
+    async def fetch():
+        """
+        Helper method to fetch data
+        :return: Dict
+        """
+        async with FRED_API(api_key=os.getenv('FRED_KEY')) as api:
+            if api:
+                return await api.get_series_obs(series_id)
+            else:
+                return None
+
+    try:
+        return asyncio.run(fetch())
+    except Exception as e:
+        print(f"Could not retrieve data due to following error: {e}")
+
+
+def clean_data(raw_data:Optional[pd.DataFrame])-> pd.DataFrame:
+    """
+    Cleans raw data provided by the FRED_API
+    :param raw_data: contains raw data for selected asset
+    :type raw_data: Optional[pd.DataFrame]
+    :return: pd.DataFrame
+    """
+    # Check for valid data
+    if raw_data is None or raw_data.empty:
+        # Return empty value for bad data
+        return pd.DataFrame()
+    else:
+        cleaner= Fred_Data_Cleaner(df=raw_data)
+        return (
+            cleaner
+            .replace_columns()
+            .handle_missing_values()
+            .str_to_numb()
+            .calculate_pct_change()
+            .get_cleaned_data()
+        )
 def function_3():
     ...
 
-if __name__=="__main__":
+
+if __name__ == "__main__":
     main()

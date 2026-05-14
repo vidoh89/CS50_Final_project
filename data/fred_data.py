@@ -139,7 +139,6 @@ class FRED_API(Logs):
         if params is None:
             params = dict()
         params["series_id"] = series_id
-
         data = await self._request_data(
             endpoint,
             params
