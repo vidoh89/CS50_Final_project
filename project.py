@@ -1,5 +1,8 @@
 import asyncio
 
+import plotly
+
+from app_ui.graph_data import Graph_For_Data
 from data.fred_data import FRED_API
 import os
 import pandas as pd
@@ -69,10 +72,17 @@ Start:With implementing logs for tracking
 
 
 def main():
-    series_id ='GDPC1' # Variable to hold asset
-    data= get_data(series_id)
-    new_df=clean_data(data)
+    series_id = 'GDPC1'  # Variable to hold asset
+    data = get_data(series_id)
+    new_df = clean_data(data)
+    graph_data= data_plot(df=new_df)
+    if graph_data:
+        graph_data.show()
+
+
     print(f'New data frame successfully transformed:->{new_df}')
+
+
 def get_data(series_id: Optional[str]) -> pd.DataFrame:
     """
     Fetches data from FRED_API object
@@ -99,7 +109,7 @@ def get_data(series_id: Optional[str]) -> pd.DataFrame:
         print(f"Could not retrieve data due to following error: {e}")
 
 
-def clean_data(raw_data:Optional[pd.DataFrame])-> pd.DataFrame:
+def clean_data(raw_data: Optional[pd.DataFrame]) -> pd.DataFrame:
     """
     Cleans raw data provided by the FRED_API
     :param raw_data: contains raw data for selected asset
@@ -111,7 +121,7 @@ def clean_data(raw_data:Optional[pd.DataFrame])-> pd.DataFrame:
         # Return empty value for bad data
         return pd.DataFrame()
     else:
-        cleaner= Fred_Data_Cleaner(df=raw_data)
+        cleaner = Fred_Data_Cleaner(df=raw_data)
         return (
             cleaner
             .replace_columns()
@@ -120,8 +130,18 @@ def clean_data(raw_data:Optional[pd.DataFrame])-> pd.DataFrame:
             .calculate_pct_change()
             .get_cleaned_data()
         )
-def function_3():
-    ...
+
+
+def data_plot(df: Optional[pd.DataFrame]):
+    """
+    Plots data provided by the FRED API
+    :param df: Asset data
+    :type: Optional[pd.DataFrame]
+    :return: plotly.Figure
+    """
+    # Check for valid data frame
+    grapher = Graph_For_Data()
+    return grapher.graph_generator(df=df,fig_title='GDPC1')
 
 
 if __name__ == "__main__":
