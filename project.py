@@ -72,12 +72,18 @@ Start:With implementing logs for tracking
 
 
 def main():
-    series_id = 'GDPC1'  # Variable to hold asset
-    data = get_data(series_id)
-    new_df = clean_data(data)
-    graph_data= data_plot(df=new_df)
-    if graph_data:
-        graph_data.show()
+    try:
+        series_id = 'GDPC1'  # Variable to hold asset
+        data = get_data(series_id) # Retrieves data
+        new_df = clean_data(data)# Cleans and manipulates raw data
+        graph_data= data_plot(df=new_df)# Graphs data
+        if not data.empty and not new_df.empty:
+            if 'value value_growth_rate' in new_df.values:
+                print(f"new dataframe :->{new_df}")
+            if graph_data:
+                graph_data.show()
+    except Exception as e:
+        raise Exception(f'Could not graph data due to following error:{e}')
 
 
     print(f'New data frame successfully transformed:->{new_df}')
