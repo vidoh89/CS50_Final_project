@@ -1,12 +1,12 @@
 import pytest
-from project import get_data,clean_data,data_plot
+from project import get_data, clean_data, data_plot
 from data.fred_data import FRED_API
 from logs import logs
 from data import fred_data
 import pandas as pd
 import aiohttp
 import asyncio
-from unittest.mock import Mock,MagicMock,AsyncMock
+from unittest.mock import Mock, MagicMock, AsyncMock
 from unittest.mock import patch
 
 
@@ -17,25 +17,60 @@ def test_get_data():
     """
     # Create mocked data
     mocked_data = {
-        'date':['2026-01-01','2026-04-01'],
-        'value':['23548.210','24000.150']
+        'date': ['2026-01-01', '2026-04-01'],
+        'value': ['23548.210', '24000.150']
     }
-    expected_df= pd.DataFrame(mocked_data)
+    expected_df = pd.DataFrame(mocked_data)
     # Patch FRED_API
     with patch('project.FRED_API') as MockFredAPI:
         # Mock to handle async context manager
-        mock_api_instance= AsyncMock()
+        mock_api_instance = AsyncMock()
         # Return mock data from get_series_obs
-        mock_api_instance.get_series_obs.return_value= expected_df
+        mock_api_instance.get_series_obs.return_value = expected_df
         # Configure the context manager to mock instance
-        MockFredAPI.return_value.__aenter__.return_value= mock_api_instance
+        MockFredAPI.return_value.__aenter__.return_value = mock_api_instance
         # Call results using get_data()
-        result= get_data('GDPC1')
-    assert isinstance(result,pd.DataFrame)
+        result = get_data('GDPC1')
+    assert isinstance(result, pd.DataFrame)
     assert not result.empty
     assert 'value' in result.keys()
     assert '2026-01-01' in result.values
     assert '23548.210' in result.values
 
 
+def test_get_data_network_error():
+    """
+    Check for graceful exception handling and returns None for bad request
+    :return: None
+    """
+    with patch('project.FRED_API') as MockFredAPI:
+        mock_api_instance = AsyncMock()
+        # Mock Exception as side_effect
+        mock_api_instance.get_series_obs.side_effect = Exception("Connection Timeout")
+        # Mock return value for MockFredAPI
+        MockFredAPI.return_value.__aenter__.return_value = mock_api_instance
+
+        result = get_data('GDPC1')
+
+        assert result is None
+
+
+def test_get_data_bad_input(capsys):
+    """
+    Checks for incorrect asset input and returns None if assets does not exist
+    :raise Exception: For bad input
+    :return: None
+    """
+    with patch('project.FRED_API') as Mock_Fred_API:
+        mock_api_instance = AsyncMock()
+        # Simulate a bad request to the FRED api
+        mock_api_instance.get_series_obs.side_effect = Exception('Asset does not exist')
+        # Set mocked data to Mock_Fred_API return value
+        Mock_Fred_API.return_value.__aenter__.return_value = mock_api_instance
+        # Holds result for bad input
+        result = get_data('GGCC2')
+        # Captures and returns the mocked error msg
+        captured_err= capsys.readouterr()
+        assert result is None
+        assert "Asset does not exist" in captured_err.out
 
