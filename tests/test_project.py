@@ -73,4 +73,41 @@ def test_get_data_bad_input(capsys):
         captured_err= capsys.readouterr()
         assert result is None
         assert "Asset does not exist" in captured_err.out
+def test_clean_data_single_row():
+    """
+    Test to ensure clean_data handles a single-row DataFrame gracefully
+    by returning an empty data frame due to look-back constraints.
+    retrieved from the FRED_API
+    """
+    # Mock data
+    mocked_data= {
+        "realtime_start":["2013-08-14"],
+        "realtime_end":["2013-08-20"],
+        "value":["2182.681"]
+    }
+    # datetime index to mimic FRED'S data format
+    mocked_df= pd.DataFrame(data=mocked_data,index=pd.to_datetime(["2013-01-01"]))
+
+    # Call clean_data passing mocked_df
+    result_df = clean_data(raw_data=mocked_df)
+
+    # Assertions
+    assert isinstance(result_df,pd.DataFrame)
+    assert result_df.empty
+    assert len(result_df)==0
+def test_clean_data_incorrect_key():
+    """
+    Test to ensure an empty data frame is returned if
+    key values are incorrect.
+    :return:
+    """
+    bad_keys= {
+        "incorrect_key_1":[1,2],
+        "incorrect_key_2":[3,4]
+    }
+    # Pass bad_keys to the clean_data function
+    result= clean_data(raw_data=pd.DataFrame(data=bad_keys))
+    # Assertions
+    assert isinstance(result,pd.DataFrame)
+    assert len(result)==2
 
