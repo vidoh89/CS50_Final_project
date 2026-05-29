@@ -1,3 +1,4 @@
+
 import pytest
 from project import get_data, clean_data, data_plot
 from data.fred_data import FRED_API
@@ -110,4 +111,21 @@ def test_clean_data_incorrect_key():
     # Assertions
     assert isinstance(result,pd.DataFrame)
     assert len(result)==2
+def test_clean_data_NaN():
+    """
+    Test the proper handling of NaN values
+    :return:
+    """
+    import numpy as np
+    # Create mock dataset
+    mock_data={
+        "realtime_start":["2013-08-14","2013-08-14","2013-08-14"],
+        "realtime_end":["2013-08-20","2013-08-20","2013-08-20"],
+        "value":["100.0",np.nan,"110.0"]
+    }
+    # Create data frame populated with mocked data
+    mocked_df= pd.DataFrame(data=mock_data,index=pd.to_datetime(["2025-01-01","2025-04-01","2025-07-01"]))
+    # Pass data to clean_data() for manipulation
+    result= clean_data(raw_data=mocked_df)
 
+    assert isinstance(result,pd.DataFrame)

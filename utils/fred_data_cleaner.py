@@ -12,6 +12,7 @@ from pathlib import Path
 
 
 
+
 class Fred_Data_Cleaner(Logs):
     """
     Cleans and manipulates data provided via FRED_API module.
