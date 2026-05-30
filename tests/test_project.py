@@ -129,3 +129,9 @@ def test_clean_data_NaN():
     result= clean_data(raw_data=mocked_df)
 
     assert isinstance(result,pd.DataFrame)
+    assert len(result)==2
+    assert "value" in result.columns
+    assert "value_growth_rate" in result.columns
+    assert result.loc["2025-04-01","value"]== 100.0
+    assert result.loc["2025-04-01","value_growth_rate"]== 0.0
+    assert result.loc["2025-07-01","value_growth_rate"]== 10.000000000000009
