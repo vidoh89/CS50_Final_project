@@ -2,6 +2,7 @@ import asyncio
 
 import plotly
 
+import data.fred_data
 from app_ui.graph_data import Graph_For_Data
 from data.fred_data import FRED_API
 import os
@@ -146,8 +147,18 @@ def data_plot(df: Optional[pd.DataFrame]):
     :return: plotly.Figure
     """
     # Check for valid data frame
-    grapher = Graph_For_Data()
-    return grapher.graph_generator(df=df,fig_title='GDPC1')
+    if df is None or df.empty:
+        print(f"Could not plot data, the data is either missing or corrupted.")
+        return None
+    try:
+        grapher = Graph_For_Data()
+        if grapher and isinstance(grapher,Graph_For_Data):
+            print(type(grapher))
+            return grapher.graph_generator(df=df)
+
+    except Exception as err:
+        raise Exception(f"Could not plot data due to following error:{err}")
+
 
 
 if __name__ == "__main__":

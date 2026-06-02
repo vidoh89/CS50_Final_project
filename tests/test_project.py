@@ -74,7 +74,7 @@ def test_get_data_bad_input(capsys):
         captured_err= capsys.readouterr()
         assert result is None
         assert "Asset does not exist" in captured_err.out
-def test_clean_data_single_row():
+def test_clean_data():
     """
     Test to ensure clean_data handles a single-row DataFrame gracefully
     by returning an empty data frame due to look-back constraints.
@@ -132,6 +132,49 @@ def test_clean_data_NaN():
     assert len(result)==2
     assert "value" in result.columns
     assert "value_growth_rate" in result.columns
-    assert result.loc["2025-04-01","value"]== 100.0
-    assert result.loc["2025-04-01","value_growth_rate"]== 0.0
-    assert result.loc["2025-07-01","value_growth_rate"]== 10.000000000000009
+    assert result.loc["2025-04-01","value"]== pytest.approx(100.0)
+    assert result.loc["2025-04-01","value_growth_rate"]== pytest.approx(0.0)
+    assert result.loc["2025-07-01","value_growth_rate"]== pytest.approx(10.0)
+    assert result.loc["2025-07-01","value"]== pytest.approx(110.0)
+def test_data_plot():
+    """
+    Test to verify correct plotting of data.
+    :return:
+    """
+    import plotly.graph_objs as go
+    mock_data= {
+        "value":[24152.656,24300.100],
+        "value_growth_rate":[0.402843,0.610123]
+
+    }
+    mock_df= pd.DataFrame(data=mock_data,index=pd.to_datetime(["2025-01-01","2025-02-01"]))
+    fig=data_plot(mock_df)
+
+    assert fig is not None
+    assert isinstance(fig,go.Figure)
+def test_data_plot_bad_data(capsys):
+    """
+    Test that, if passed an empty or <None> value data set,
+    data_plot() returns None
+    :return:
+    """
+
+    # Create df with a None value
+    none_value_df= data_plot(df=None)
+    capture_msg_none_value= capsys.readouterr()
+    # Assertions for None value
+    assert none_value_df is None
+    assert "either missing or corrupted" in capture_msg_none_value.out
+
+    # Create an empty data frame
+    empty_df= pd.DataFrame()
+    no_result= data_plot(df=empty_df)
+    captured_msg= capsys.readouterr()
+    # Assertions for empty df
+    assert no_result is None
+    assert "either missing or corrupted" in captured_msg.out
+
+
+
+
+
