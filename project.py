@@ -78,8 +78,8 @@ def main():
         data = get_data(series_id) # Retrieves data
         new_df = clean_data(data)# Cleans and manipulates raw data
         graph_data= data_plot(df=new_df)# Graphs data
-        if not data.empty and not new_df.empty:
-            if 'value value_growth_rate' in new_df.values:
+        if data is not None and not data.empty and not new_df.empty:
+            if 'value' in new_df.columns and "value_growth_rate" in new_df.columns:
                 print(f"new dataframe :->{new_df}")
             if graph_data:
                 graph_data.show()
